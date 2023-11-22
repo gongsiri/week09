@@ -162,23 +162,23 @@
                         </div>
                     </div>
                 </div>
-                <form action="/week09/jsp/main.jsp" onsubmit="return check()" id="input_date_div"> <!--일정 추가 영역-->
+                <form action="/week09/jsp/create_schedule_action.jsp" onsubmit="return check()" id="input_date_div"> <!--일정 추가 영역-->
                     <div id="input_date_top">
                         <div id="time"> <!--시간-->
-                            <button type="button" id="apm" onclick="apm_change_event()">AM</button>
-                            <div id="hour">1</div>
+                            <button type="button" id="apm" onclick="apm_change_event()" name="apm_value">AM</button>
+                            <div id="hour" name="hour_value">1</div>
                             <div id="hour_button_div">
                                 <button type="button" id="hour_plus_btn" onclick="hour_plus_event()">+</button>
                                 <button type="button" id="hour_minus_btn" onclick="hour_minus_event()">-</button>
                             </div>
-                            <div id="minute">00</div>
+                            <div id="minute" name="minute_value">00</div>
                             <div id="minute_button_div">
                                 <button type="button" id="minute_plus_btn" onclick="minute_plus_event()">+</button>
                                 <button type="button" id="minute_minus_btn" onclick="minute_minus_event()">-</button>
                             </div>
                         </div>
                         <p id="alert_content">내용을 입력해 주세요</p> <!--경고 문구-->
-                        <input type="submit" id="add" value="추가">
+                        <input type="submit" id="add" value="추가" name="content_value">
                     </div>
                     <input type="text" id="input_date" placeholder="내용을 입력해 주세요."> <!--일정 내용-->
                 </form>
