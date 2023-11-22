@@ -21,11 +21,11 @@
             var phone_pattern = /^01[0179][0-9]{7,8}$/
             
             if(name.trim()==="" || !name_pattern.test(name)){
-                alert("이름을 제대로 입력해 주세요")
+                alert("이름을 제대로 입력해 주세요!")
                 return false
             }
             if(phone.trim()==="" || !phone_pattern.test(phone)){
-                alert("전화번호를 제대로 입력해 주세요")
+                alert("전화번호를 제대로 입력해 주세요!")
                 return false
             }
         }

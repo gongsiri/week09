@@ -213,7 +213,7 @@
             </div>
             <div id="button_div">
                 <input type="button" id="modify" value="수정" onclick="location.href='/week09/jsp/modify_info.jsp'">
-                <input type="button" id="log_out" value="로그아웃">
+                <input type="button" id="log_out" value="로그아웃" onclick="location.href='/week09/jsp/log_out_action.jsp'">
             </div>
             <div id="border_line"></div>
             <div id="member_list">

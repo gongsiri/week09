@@ -110,7 +110,7 @@
 
             <div class="submit_btn_div">
                 <input type="submit" value="수정하기" id="sign_up" onclick="modify_info()">
-                <input type="button" value="탈퇴하기" id="withdraw">
+                <input type="button" value="탈퇴하기" id="withdraw" onclick="location.href='/week09/jsp/resign_action.jsp'">
                 <input type="button" value="취소" id="cancel" onclick="location.href='/week09/jsp/main.jsp'">
             </div>
         </form>
