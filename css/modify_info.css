@@ -1,0 +1,110 @@
+body{
+    margin:0;
+    position:relative;
+}
+header{
+    height: 80px;
+    background-color: #E16A9D;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#logo{
+    font-size: 32px;
+    font-weight: bold;
+    margin-left:30px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+main{
+    border: 3px solid #E16A9D;
+    max-width: 450px;
+    margin-right:auto;
+    margin-left:auto;
+    margin-top:100px;
+    width:90%;
+}
+form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.title_div{
+    text-align: center;
+    font-size: 30px;
+    font-weight: bolder;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: #E16A9D;
+}
+.input_wrapper_div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    height: 50px;
+}
+.input_name_div{
+    font-weight: bold;
+    font-size:large;
+}
+.input_div{
+    display: flex;
+    width:70%;
+}
+.input_div input{
+    height: 24px;
+    border: none;
+    border: 2px solid #E16A9D;
+    border-radius: 6px;
+    width:100%;
+}
+.radio_div{
+    width:70%;
+}
+.input_div label{
+    width:80%;
+}
+#id_duplication_check_btn{
+    margin-left: 10px;
+    width:40%;
+    height: 30px;
+    background-color: #E16A9D;
+    cursor: pointer;
+}
+.submit_btn_div{
+    margin-bottom: 20px;
+    margin-top: 20px;
+    width:50%;
+    display: flex;
+    justify-content: space-evenly;
+}
+#sign_up, #cancel{
+    height: 40px;
+    border-radius: 6px;
+    border:none;
+    font-weight: bolder;
+    background-color: #E16A9D;
+    cursor: pointer;
+}
+#cancel, #withdraw{
+    height: 40px;
+    border-radius: 6px;
+    border:none;
+    font-weight: bolder;
+    background-color: lightgray;
+    cursor: pointer;
+}
+@media screen and (max-width: 475px) {
+    .input_wrapper_div{
+        flex-direction: column;
+        height: fit-content;
+        margin-bottom: 20px;
+    }
+    .radio_div{
+        display: flex;
+        justify-content: center;
+    }
+}

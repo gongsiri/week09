@@ -1,0 +1,330 @@
+#dark_background{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height: 100%;
+    background-color:  rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index:2;
+}
+.menu{
+    margin-right: 10px;
+    width:50px;
+    height: 100%;
+    overflow: hidden;
+    position:relative;
+    border: none;
+    background-color: rgba(0,0,0,0);
+    cursor: pointer;
+}
+table{
+    border-collapse: collapse;
+    width:100%;
+    max-width:900px;
+    margin-top:50px;
+    margin-left: auto;
+    margin-right: auto;
+}
+td{
+    border: 2px solid black;
+    padding:8px;
+    height: 70px;
+    position:relative;
+    cursor: pointer;
+}
+.day_txt{
+    width:fit-content;
+    position:absolute;
+    top:5px;
+    left:5px;
+    font-size:large;
+    font-weight: bold;
+}
+#top{
+    display: flex;
+}
+#member_info{
+    margin-top:10px;
+    margin-left:20px;
+    height: 40px;
+    align-items: center;
+    border:2px solid var(--main-color);;
+    display: none;
+}
+
+#year_div{
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+}
+#year{
+    font-size:x-large;
+    font-weight: bolder;
+}
+#back, #next{
+    width:80px;
+    font-size:x-large;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+#month_div{
+    width:100%;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+.month{
+    white-space: nowrap; 
+    width:50px;
+    height: 50px;
+    border-radius: 50%;
+    border:3px solid var(--main-color);
+    background-color: transparent;
+    font-size:large;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#hidden_menu{
+    position: absolute;
+    top:0;
+    width:240px;
+    right:-240px;
+    height: 100vh;
+    background-color: white;
+    z-index: 3;
+    transition: 0.3s;
+}
+#hidden_menu_top{
+    width:240px;
+    justify-content: end;
+    display: flex;
+    height: 80px;
+}
+#info{
+    margin-top:20px;
+}
+#name_div, #id_div, #phone_div, #department_div, #rank_div{
+    height: 50px;
+    font-weight: bold;
+    font-size: large;
+    display: flex;
+    margin-left:20px;
+    margin-right:20px;
+    justify-content: space-between;
+}
+#name_div{
+    margin-top:20px;
+}
+#button_div{
+    margin-left: 20px;
+    margin-right: 20px;
+    display: flex;
+    height: 40px;
+    justify-content: space-between;
+}
+#modify{
+    width:70px;
+    background-color: var(--main-color);
+    border-radius: 10%;
+    border: none;
+    cursor: pointer;
+}
+#log_out{
+    width: 80px;
+    background-color: var(--main-color);
+    border-radius: 10%;
+    border: none;
+    cursor: pointer;
+}
+#border_line{
+    margin-top:20px;
+    border: 1px solid var(--main-color);
+    margin-right: 20px;
+    margin-left: 20px;
+}
+#member_list{
+    margin-left:20px;
+    margin-right: 20px;
+    margin-top:20px;
+    display: none;
+}
+.member{
+    margin-bottom:10px;
+    height: 50px;
+    font-weight: bold;
+    font-size: large;
+    display: flex;
+    align-items: center;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+p{
+    text-align: center;
+    font-weight: bold;
+    font-size: large;
+}
+.member_id{
+    margin-left:10px;
+}
+#modal_overlay{
+    display: none;
+    width:100%;
+    height:100%;
+    position: fixed;
+    left:0;
+    top:0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#modal{
+    /* display: none; */
+    border: 2px solid black;
+    background-color: white;
+    width:90%;
+    max-width:400px;
+    height: 500px;
+    margin:auto;
+    margin-top:100px;
+    display: flex;
+    flex-direction: column;
+}
+#date{
+    display: flex;
+    height: fit-content;
+    margin-left: 10px;
+}
+#date_div{
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 20px;
+    padding-top:20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+}
+#exit{
+    border:none;
+    background-color: rgba(0,0,0,0);
+    font-weight: bold;
+    font-size:large;
+    cursor: pointer;
+}
+.details_div_container{
+    width:100%;
+    height: 60%;
+    overflow-y: auto;
+}
+.details_div{
+    width:90%;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 10px;
+    border:2px solid var(--main-color);
+    padding:5px;
+}
+.details{
+    display: flex;
+    justify-content: space-between;
+}
+.details_content{
+    width: 70%;
+    word-wrap: break-word;
+}
+.modify_details_time{
+    display: none;
+}
+.modify_details_content{
+    display: none;
+    width: 70%;
+    word-wrap: break-word;
+}
+.modify_details_submit{
+    display: none;
+}
+.modify_details_cancel{
+    display: none;
+}
+#input_date_div{
+    width: 90%;
+    height: 100px;
+    margin-right: auto;
+    margin-left: auto;
+    padding:5px;
+    border:2px solid var(--main-color);
+    margin-top:15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+}
+#input_date_top{
+    width:98%;
+    display: flex;
+    justify-content: space-between;
+}
+#time{
+    display: flex;
+}
+.modify_details, .delete_details, .modify_details_submit, .modify_details_cancel{
+    background-color: var(--main-color);
+    border: none;
+    cursor: pointer;
+    padding:5px;
+}
+#add{
+    background-color: var(--main-color);
+    border: none;
+    cursor: pointer;
+}
+#minute,#hour{
+    margin-left: 5px;
+    margin-right: 5px;
+    display: flex;
+    align-items: center;
+}
+#minute_button_div, #hour_button_div{
+    display: flex;
+    flex-direction: column;
+}
+#input_date{
+    margin-top:10px;
+    width:95%;
+    height: 60px;
+}
+#apm{
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+#input_date_top p{
+    font-size:10px;
+    color: red;
+    display: none;
+}
+#minute_plus_btn, #minute_minus_btn, #hour_plus_btn, #hour_minus_btn{
+    background-color: var(--main-color);
+    font-size:10px;
+    cursor: pointer;
+}
+#minute_plus_btn, #hour_plus_btn{
+    border:1px solid black;
+}
+#minute_minus_btn, #hour_minu0s_btn{
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom : 1px solid black;
+}
+@media screen and (max-width:430px) {
+    table{
+        width:90%;
+    }
+    #member_info{
+        flex-direction: column;
+    }
+}
+
+

@@ -1,0 +1,63 @@
+body{
+    margin:0;
+}
+main{
+    margin-top:100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 3px solid #E16A9D;
+    max-width: 500px;
+    margin-right:auto;
+    margin-left:auto;
+    margin-top:100px;
+    width:90%;
+}
+form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width:100%;
+}
+h1{
+    margin-top:50px;
+    text-align: center;
+    white-space: normal;
+    color:#E16A9D;
+}
+.div{
+    width:90%;
+    margin-top:10px;
+    font-size:16px;
+}
+#find_btn{
+    margin-top:30px;
+    background-color: #E16A9D;
+    height: 40px;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+.find_pw_txt{
+    height: 40px;
+    display: block;
+    box-sizing: border-box;
+}
+#bottom{
+    margin-top:10px;
+    margin-bottom:50px;
+    display: flex;
+    justify-content: center;
+}
+.button{
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: grey;
+}
+#log_in_btn{
+    margin-right: 20px;
+}
+#find_id_btn{
+    margin-left: 20px;
+}
