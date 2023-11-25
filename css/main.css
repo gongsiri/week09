@@ -32,6 +32,8 @@ td{
     height: 70px;
     position:relative;
     cursor: pointer;
+    width: 14.285%; /* 100% / 7 (7개의 열이므로) */
+    box-sizing: border-box;
 }
 .day_txt{
     width:fit-content;
@@ -317,6 +319,17 @@ p{
     border-right: 1px solid black;
     border-left: 1px solid black;
     border-bottom : 1px solid black;
+}
+.circle{
+    background-color: red;
+    border-radius: 50%;
+    width: 40%;
+    height: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 @media screen and (max-width:430px) {
     table{

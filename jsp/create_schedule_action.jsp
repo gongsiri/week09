@@ -17,9 +17,8 @@
     String content_value = request.getParameter("content_value");
 
     if("PM".equals(apm_value)){
-        hour_value += 12;
+        hour_value = hour_value + 12;
     }
-    System.out.println("Final Hour Value: " + hour_value);
 
     String date_value = year_value + "-" + month_value + "-" + day_value + " " + hour_value + ":" + minute_value + ":00";
     
@@ -32,7 +31,7 @@
     query.setString(2,date_value);
     query.setString(3,content_value);
 
-    query.executeUpdate();;
+    query.executeUpdate();
 %>
 
 <head>
@@ -43,6 +42,7 @@
 <body>
     <script>
        alert("글쓰기 완료")
+       console.log('<%=hour_value%>')
     </script>
 
 </body>

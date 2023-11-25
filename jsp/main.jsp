@@ -8,12 +8,14 @@
 <%
     //session.getAttribute는 Object 자료형이기에 String으로 형변환 해줌
     Object id_value_ob = session.getAttribute("id_value");
+    Object key_value_ob = session.getAttribute("key_value");
     Object phone_value_ob = session.getAttribute("phone_value");
     Object name_value_ob = session.getAttribute("name_value");
     Object rank_value_ob = session.getAttribute("rank_value");
     Object department_value_ob = session.getAttribute("department_value");
 
     String id_value = String.valueOf(id_value_ob);
+    int key_value = Integer.parseInt(key_value_ob.toString());
     String phone_value = String.valueOf(phone_value_ob);
     String name_value = String.valueOf(name_value_ob);
     String rank_value = String.valueOf(rank_value_ob);
@@ -38,6 +40,23 @@
         member_info.add("\""+member_id+"\"");
         member_info.add("\""+member_name+"\"");
         member_list.add(member_info);
+    }
+
+    String sql2 = "SELECT date, COUNT(*) AS schedule_count FROM schedule WHERE user_key =? GROUP BY date";
+    PreparedStatement query2 = connect.prepareStatement(sql2);
+    query2.setInt(1, key_value);
+    ResultSet result2 = query2.executeQuery();
+
+    ArrayList<ArrayList<String>> schedule_list = new ArrayList<ArrayList<String>>();
+
+    while(result2.next()){
+        String date = result2.getString("date");
+        int schedule_count = result2.getInt("schedule_count");
+
+        ArrayList<String> schedule_info = new ArrayList<String>();
+        schedule_info.add("\""+date+"\"");
+        schedule_info.add(String.valueOf(schedule_count));
+        schedule_list.add(schedule_info);
     }
 %>
 
@@ -87,11 +106,12 @@
                     <input type="hidden" name="year_value" id=year_value>
                     <input type="hidden" name="month_value" id=month_value>
                     <input type="hidden" name="day_value" id=day_value>
+                    <input type="hidden" name="apm_value" class="apm_value">
                     <input type="hidden" name="hour_value" class="hour_value">
                     <input type="hidden" name="minute_value" class="minute_value">
                     <div id="input_date_top">
                         <div class="time"> <!--시간-->
-                            <input type="button" class="apm" onclick="apm_change_event(this)" name="apm_value" value="AM">
+                            <button type="button" class="apm" onclick="apm_change_event(this)">AM</button>
                             <div class="hour">1</div>
                             <div class="hour_button_div">
                                 <button type="button" class="hour_plus_btn" onclick="hour_plus_event(this,false)">+</button>
@@ -167,8 +187,31 @@
             else if('<%=rank_value%>' === "팀원"){
                 document.getElementById("member_list").style.display='none'
             }
+            is_schedule()
         }
 
+        function is_schedule(){
+            var schedule_list = <%=schedule_list%>
+            for(var i=0; i<schedule_list.length; i++){
+                var schedule_date = new Date(schedule_list[i][0])
+                var schedule_day = schedule_date.getDate()
+                var schedule_month = schedule_date.getMonth()+1
+                var schedule_year = schedule_date.getFullYear()
+                
+                console.log(schedule_day)
+                console.log(schedule_month)
+                console.log(schedule_year)
+
+                var schedule_count = schedule_list[i][1]
+                console.log(schedule_year+"-"+schedule_month +"-"+schedule_day)
+                var day_element = document.getElementById(schedule_year+"-"+schedule_month +"-"+schedule_day)
+
+                var circle_div = document.createElement("div")
+                circle_div.className="circle"
+                circle_div.innerHTML=schedule_count
+                day_element.appendChild(circle_div)   
+            }
+        }
         function make_schedule(){
             var details_div_container = document.getElementsByClassName("details_div_container")[0]
             details_div_container.className="details_div_container"
@@ -390,14 +433,17 @@
             make_calender(month)
         }
     
-        function open_modal_event(id, month, year) {
+        function open_modal_event(id) {
             var modify_details = document.getElementsByClassName("modify_details")
             var delete_details = document.getElementsByClassName("delete_details")
             var input_date_div = document.getElementById("input_date_div")
             var member_name_div = document.getElementById("member_name_div").innerHTML
     
-            var day = parseInt(id.match(/\d+/)[0])
-    
+            var part = id.split("-")
+            var year = parseInt(part[0]);
+            var month = parseInt(part[1]);
+            var day = parseInt(part[2]);
+
             document.getElementById("input_date").value = "";
             document.getElementById("alert_content").style.display = "none";
             for(var i=0; i<4; i++){
@@ -405,6 +451,9 @@
                 document.getElementsByClassName("minute")[i].innerHTML="00";
                 document.getElementsByClassName("apm")[i].innerHTML="AM"
             }
+            document.getElementsByClassName("hour_value")[0].value = "1";
+            document.getElementsByClassName("minute_value")[0].value = "00";
+            document.getElementsByClassName("apm_value")[0].value = "AM";
             for(var i=0; i<3; i++){
                 document.getElementsByClassName("modify_details_content")[i].value=""
                 modify_details_cancel_event(document.getElementsByClassName("details_div")[i])
@@ -425,6 +474,7 @@
                 }
                 input_date_div.style.display='none'
             }
+            console.log(id)
         }
     
         function close_modal_event() {
@@ -511,11 +561,13 @@
             console.log(selected)
             console.log(selected.closest("#input_date_div"))
             var input_date_div = selected.closest("#input_date_div")
-            if (selected.value == "AM") {
-                selected.value = "PM"
+            if (selected.innerHTML == "AM") {
+                selected.innerHTML = "PM"
+                input_date_div.getElementsByClassName("apm_value")[0].value="PM"
             }
             else{
-                selected.value = "AM"
+                selected.innerHTML = "AM"
+                input_date_div.getElementsByClassName("apm_value")[0].value="AM"
             }
         }
     
@@ -636,10 +688,11 @@
                         div.classList.add("day_txt")
                         div.innerHTML = month_day
                         td.appendChild(div)
-    
-                        td.id = "day" + month_day
+                    
+                        td.id = year+"-"+month +"-"+month_day
+
                         td.onclick = function () {
-                            open_modal_event(this.id, month, year)
+                            open_modal_event(this.id)
                         }
                     }
                     tr.appendChild(td)
