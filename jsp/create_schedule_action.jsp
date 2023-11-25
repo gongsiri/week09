@@ -17,8 +17,14 @@
     String content_value = request.getParameter("content_value");
 
     if("PM".equals(apm_value)){
-        hour_value = hour_value + 12;
+        if(hour_value !=12){
+            hour_value = hour_value + 12;
+        }
     }
+    else if("AM".equals(apm_value) && hour_value == 12){
+        hour_value = 0;
+    }
+        
 
     String date_value = year_value + "-" + month_value + "-" + day_value + " " + hour_value + ":" + minute_value + ":00";
     

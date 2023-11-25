@@ -42,7 +42,7 @@
         member_list.add(member_info);
     }
 
-    String sql2 = "SELECT date, COUNT(*) AS schedule_count FROM schedule WHERE user_key =? GROUP BY date";
+    String sql2 = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS formatted_date, COUNT(*) AS schedule_count FROM schedule WHERE user_key = ? GROUP BY formatted_date";
     PreparedStatement query2 = connect.prepareStatement(sql2);
     query2.setInt(1, key_value);
     ResultSet result2 = query2.executeQuery();
@@ -50,7 +50,7 @@
     ArrayList<ArrayList<String>> schedule_list = new ArrayList<ArrayList<String>>();
 
     while(result2.next()){
-        String date = result2.getString("date");
+        String date = result2.getString("formatted_date");
         int schedule_count = result2.getInt("schedule_count");
 
         ArrayList<String> schedule_info = new ArrayList<String>();
@@ -206,13 +206,29 @@
                 console.log(schedule_year+"-"+schedule_month +"-"+schedule_day)
                 var day_element = document.getElementById(schedule_year+"-"+schedule_month +"-"+schedule_day)
 
-                var circle_div = document.createElement("div")
-                circle_div.className="circle"
-                circle_div.innerHTML=schedule_count
-                day_element.appendChild(circle_div)   
+                if (day_element) {
+                    var existing_circle = day_element.getElementsByClassName("circle")
+                    if (existing_circle.length > 0) {
+                        if(schedule_count >= 10){
+                            existing_circle[0].innerHTML = "9+"
+                        }
+                        else{
+                            existing_circle[0].innerHTML = schedule_count
+                        }
+                    } else {
+                        var circle_div = document.createElement("div");
+                        circle_div.className = "circle";
+                        if (schedule_count >= 10) {
+                            circle_div.innerHTML = '9+';
+                        } else {
+                            circle_div.innerHTML = schedule_count;
+                        }
+                        day_element.appendChild(circle_div);
+            }
+        }  
             }
         }
-        function make_schedule(){
+        function make_schedule(year,month,day){
             var details_div_container = document.getElementsByClassName("details_div_container")[0]
             details_div_container.className="details_div_container"
 
@@ -443,6 +459,8 @@
             var year = parseInt(part[0]);
             var month = parseInt(part[1]);
             var day = parseInt(part[2]);
+
+            make_schedule(year,month,day)
 
             document.getElementById("input_date").value = "";
             document.getElementById("alert_content").style.display = "none";
@@ -699,6 +717,7 @@
                 }
                 table.appendChild(tr)
             }
+            is_schedule();
         }
     
         function make_month(){
