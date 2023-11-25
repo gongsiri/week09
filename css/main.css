@@ -179,7 +179,6 @@ p{
     top:0;
     background-color: rgba(0, 0, 0, 0.5);
 }
-
 #modal{
     /* display: none; */
     border: 2px solid black;
@@ -211,6 +210,7 @@ p{
     background-color: rgba(0,0,0,0);
     font-weight: bold;
     font-size:large;
+    margin-right: 10px;
     cursor: pointer;
 }
 .details_div_container{
@@ -234,7 +234,7 @@ p{
     width: 70%;
     word-wrap: break-word;
 }
-.modify_details_time{
+.modify_details_time, .modify_details_time.time{
     display: none;
 }
 .modify_details_content{
@@ -266,7 +266,7 @@ p{
     display: flex;
     justify-content: space-between;
 }
-#time{
+.time{
     display: flex;
 }
 .modify_details, .delete_details, .modify_details_submit, .modify_details_cancel{
@@ -280,13 +280,13 @@ p{
     border: none;
     cursor: pointer;
 }
-#minute,#hour{
+.minute,.hour{
     margin-left: 5px;
     margin-right: 5px;
     display: flex;
     align-items: center;
 }
-#minute_button_div, #hour_button_div{
+.minute_button_div, .hour_button_div{
     display: flex;
     flex-direction: column;
 }
@@ -295,7 +295,7 @@ p{
     width:95%;
     height: 60px;
 }
-#apm{
+.apm{
     background-color: transparent;
     border: none;
     cursor: pointer;
@@ -305,15 +305,15 @@ p{
     color: red;
     display: none;
 }
-#minute_plus_btn, #minute_minus_btn, #hour_plus_btn, #hour_minus_btn{
+.minute_plus_btn, .minute_minus_btn, .hour_plus_btn, .hour_minus_btn{
     background-color: var(--main-color);
     font-size:10px;
     cursor: pointer;
 }
-#minute_plus_btn, #hour_plus_btn{
+.minute_plus_btn, .hour_plus_btn{
     border:1px solid black;
 }
-#minute_minus_btn, #hour_minu0s_btn{
+.minute_minus_btn, .hour_minu0s_btn{
     border-right: 1px solid black;
     border-left: 1px solid black;
     border-bottom : 1px solid black;

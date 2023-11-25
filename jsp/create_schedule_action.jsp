@@ -6,24 +6,33 @@
 
 <%
     request.setCharacterEncoding("utf-8");
-    Object id_value_ob = session.getAttribute("id_value");
-    String id_value = String.valueOf(id_value_ob);
+    Object key_value_ob = session.getAttribute("key_value");
+    int key_value = Integer.parseInt(key_value_ob.toString());
     String apm_value = request.getParameter("apm_value");
-    String hour_value = request.getParameter("hour_value");
-    String minute_value = request.getParameter("minute_value");
+    int hour_value = Integer.parseInt(request.getParameter("hour_value"));
+    int minute_value = Integer.parseInt(request.getParameter("minute_value"));
+    int year_value = Integer.parseInt(request.getParameter("year_value"));
+    int month_value = Integer.parseInt(request.getParameter("month_value"));
+    int day_value = Integer.parseInt(request.getParameter("day_value"));
     String content_value = request.getParameter("content_value");
 
+    if("PM".equals(apm_value)){
+        hour_value += 12;
+    }
+    System.out.println("Final Hour Value: " + hour_value);
+
+    String date_value = year_value + "-" + month_value + "-" + day_value + " " + hour_value + ":" + minute_value + ":00";
+    
     Class.forName("com.mysql.jdbc.Driver");
     Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
 
-    //입력된 id를 기준으로 유저들 가져옴
-    String sql = "SELECT * FROM user WHERE id=?";
+    String sql = "INSERT INTO schedule (user_key, date, content) VALUES (?,?,?)";
     PreparedStatement query = connect.prepareStatement(sql);
-    query.setString(1, id_value);
-    ResultSet result = query.executeQuery();
-    while(result.next()){ // 유저가 있으면 check = 1
-        check=1;
-    }
+    query.setInt(1,key_value);
+    query.setString(2,date_value);
+    query.setString(3,content_value);
+
+    query.executeUpdate();;
 %>
 
 <head>
@@ -33,20 +42,7 @@
 </head>
 <body>
     <script>
-        if(<%=check%>==1){ // 중복되면
-            alert("<%=id_value%>"+"는 사용할 수 없습니다.")
-            window.close();
-        }
-        else{
-            if(confirm("<%=id_value%>"+"는 사용할 수 있습니다.\n" +"사용하시겠습니까?")){
-                window.opener.document.getElementById("id_duplication_check_btn").style.display="none" // window.opener : 이 창을 호출한 부모창 -> 중복 버튼 없앰
-                window.opener.document.getElementById("id").readOnly = true; // 아이디 입력 못 하게 막자
-                window.close();
-            }
-            else{
-                window.close();
-            }
-        }
+       alert("글쓰기 완료")
     </script>
 
 </body>

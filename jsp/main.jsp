@@ -82,105 +82,31 @@
                     </div>
                     <button type="button" id="exit" onclick="close_modal_event()">X</button>
                 </div>
-                <div class="details_div_container"> <!--일정 컨테이너-->
-                    <div class="details_div">
-                        <div class="details_time">AM 10:00</div> <!--시간-->
-                        <div class="modify_details_time"> <!--수정 클릭시-->
-                            <button type="button" id="apm" onclick="apm_change_event()">AM</button>
-                            <div id="hour">1</div>
-                            <div id="hour_button_div">
-                                <button type="button" id="hour_plus_btn" onclick="hour_plus_event()">+</button>
-                                <button type="button" id="hour_minus_btn" onclick="hour_minus_event()">-</button>
-                            </div>
-                            <div id="minute">00</div>
-                            <div id="minute_button_div">
-                                <button type="button" id="minute_plus_btn" onclick="minute_plus_event()">+</button>
-                                <button type="button" id="minute_minus_btn" onclick="minute_minus_event()">-</button>
-                            </div>
-                        </div>
-                        <div class="details"> <!--일정-->
-                            <div class="details_content">미용실 가기</div>
-                            <input class="modify_details_content" placeholder="미용실 가기"> <!--수정 클릭시-->
-                            <div class="button_div">
-                                <button type="button" class="modify_details" onclick="modify_details_event(this)">수정</button>
-                                <button type="button" class="delete_details">삭제</button>
-                                <button type="button" class="modify_details_submit">완료</button> <!--수정 클릭시-->
-                                <button type="button" class="modify_details_cancel" onclick="modify_details_cancel_event(this)">취소</button> <!--수정 클릭시-->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="details_div">
-                        <div class="details_time">PM 1:30</div>
-                        <div class="modify_details_time">
-                            <button type="button" id="apm" onclick="apm_change_event()">AM</button>
-                            <div id="hour">1</div>
-                            <div id="hour_button_div">
-                                <button type="button" id="hour_plus_btn" onclick="hour_plus_event()">+</button>
-                                <button type="button" id="hour_minus_btn" onclick="hour_minus_event()">-</button>
-                            </div>
-                            <div id="minute">00</div>
-                            <div id="minute_button_div">
-                                <button type="button" id="minute_plus_btn" onclick="minute_plus_event()">+</button>
-                                <button type="button" id="minute_minus_btn" onclick="minute_minus_event()">-</button>
-                            </div>
-                        </div>
-                        <div class="details">
-                            <div class="details_content">점심 약속</div>
-                            <input class="modify_details_content" placeholder="점심 약속">
-                            <div class="button_div">
-                                <button type="button" class="modify_details" onclick="modify_details_event(this)">수정</button>
-                                <button type="button" class="delete_details">삭제</button>
-                                <button type="button" class="modify_details_submit">완료</button>
-                                <button type="button" class="modify_details_cancel" onclick="modify_details_cancel_event(this)">취소</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="details_div">
-                        <div class="details_time">PM 6:00</div>
-                        <div class="modify_details_time">
-                            <button type="button" id="apm" onclick="apm_change_event()">AM</button>
-                            <div id="hour">1</div>
-                            <div id="hour_button_div">
-                                <button type="button" id="hour_plus_btn" onclick="hour_plus_event()">+</button>
-                                <button type="button" id="hour_minus_btn" onclick="hour_minus_event()">-</button>
-                            </div>
-                            <div id="minute">00</div>
-                            <div id="minute_button_div">
-                                <button type="button" id="minute_plus_btn" onclick="minute_plus_event()">+</button>
-                                <button type="button" id="minute_minus_btn" onclick="minute_minus_event()">-</button>
-                            </div>
-                        </div>
-                        <div class="details">
-                            <div class="details_content">알바 가기</div>
-                            <input class="modify_details_content" placeholder="알바 가기">
-                            <div class="button_div">
-                                <button type="button" class="modify_details" onclick="modify_details_event(this)">수정</button>
-                                <button type="button" class="delete_details">삭제</button>
-                                <button type="button" class="modify_details_submit">완료</button>
-                                <button type="button" class="modify_details_cancel" onclick="modify_details_cancel_event(this)">취소</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <form action="/week09/jsp/create_schedule_action.jsp" onsubmit="return check()" id="input_date_div"> <!--일정 추가 영역-->
+                <div class="details_div_container"> <!--일정 컨테이너--></div>
+                <form action="/week09/jsp/create_schedule_action.jsp" onsubmit="return check_event()" id="input_date_div"> <!--일정 추가 영역-->
+                    <input type="hidden" name="year_value" id=year_value>
+                    <input type="hidden" name="month_value" id=month_value>
+                    <input type="hidden" name="day_value" id=day_value>
+                    <input type="hidden" name="hour_value" class="hour_value">
+                    <input type="hidden" name="minute_value" class="minute_value">
                     <div id="input_date_top">
-                        <div id="time"> <!--시간-->
-                            <button type="button" id="apm" onclick="apm_change_event()" name="apm_value">AM</button>
-                            <div id="hour" name="hour_value">1</div>
-                            <div id="hour_button_div">
-                                <button type="button" id="hour_plus_btn" onclick="hour_plus_event()">+</button>
-                                <button type="button" id="hour_minus_btn" onclick="hour_minus_event()">-</button>
+                        <div class="time"> <!--시간-->
+                            <input type="button" class="apm" onclick="apm_change_event(this)" name="apm_value" value="AM">
+                            <div class="hour">1</div>
+                            <div class="hour_button_div">
+                                <button type="button" class="hour_plus_btn" onclick="hour_plus_event(this,false)">+</button>
+                                <button type="button" class="hour_minus_btn" onclick="hour_minus_event(this,false)">-</button>
                             </div>
-                            <div id="minute" name="minute_value">00</div>
-                            <div id="minute_button_div">
-                                <button type="button" id="minute_plus_btn" onclick="minute_plus_event()">+</button>
-                                <button type="button" id="minute_minus_btn" onclick="minute_minus_event()">-</button>
+                            <div class="minute">00</div>
+                            <div class="minute_button_div">
+                                <button type="button" class="minute_plus_btn" onclick="minute_plus_event(this,false)">+</button>
+                                <button type="button" class="minute_minus_btn" onclick="minute_minus_event(this,false)">-</button>
                             </div>
                         </div>
                         <p id="alert_content">내용을 입력해 주세요</p> <!--경고 문구-->
-                        <input type="submit" id="add" value="추가" name="content_value">
+                        <input type="submit" id="add" value="추가">
                     </div>
-                    <input type="text" id="input_date" placeholder="내용을 입력해 주세요."> <!--일정 내용-->
+                    <input type="text" id="input_date" placeholder="내용을 입력해 주세요." name="content_value"> <!--일정 내용-->
                 </form>
             </div>
         </div>
@@ -229,6 +155,7 @@
     
         window.onload = function () {
             make_month()
+            make_schedule()
             document.getElementById("year").innerHTML = year
             var btn = document.getElementById("month" + month)
             select_month_event(btn)
@@ -242,6 +169,140 @@
             }
         }
 
+        function make_schedule(){
+            var details_div_container = document.getElementsByClassName("details_div_container")[0]
+            details_div_container.className="details_div_container"
+
+            for(var i=0; i<3; i++){
+                var details_div = document.createElement("div")
+                details_div.className="details_div"
+
+                var details_time = document.createElement("div")
+                details_time.className="details_time"
+                details_time.innerHTML = "AM 10:00"
+
+                var modify_details_time = document.createElement("div")
+                modify_details_time.className="modify_details_time"
+
+                var apm = document.createElement("button")
+                apm.className="apm"
+                apm.type="button"
+                apm.innerHTML="AM"
+                apm.onclick=function(){
+                    apm_change_event(this)
+                }
+
+                var hour = document.createElement("div")
+                hour.className="hour"
+                hour.innerHTML="1"
+
+                var hour_button_div = document.createElement("div")
+                hour_button_div.className="hour_button_div"
+
+                var hour_plus_btn = document.createElement("button")
+                hour_plus_btn.className="hour_plus_btn"
+                hour_plus_btn.type="button"
+                hour_plus_btn.innerHTML="+"
+                hour_plus_btn.onclick=function(){
+                    hour_plus_event(this,true)
+                }
+
+                var hour_minus_btn = document.createElement("button")
+                hour_minus_btn.className="hour_minus_btn"
+                hour_minus_btn.type="button"
+                hour_minus_btn.innerHTML="-"
+                hour_minus_btn.onclick=function(){
+                    hour_minus_event(this,true)
+                }
+
+                var minute = document.createElement("div")
+                minute.className="minute"
+                minute.innerHTML="00"
+
+                var minute_button_div = document.createElement("div")
+                minute_button_div.className="minute_button_div"
+
+                var minute_plus_btn = document.createElement("button")
+                minute_plus_btn.className="minute_plus_btn"
+                minute_plus_btn.type="button"
+                minute_plus_btn.innerHTML="+"
+                minute_plus_btn.onclick=function(){
+                    minute_plus_event(this,true)
+                }
+
+                var minute_minus_btn = document.createElement("button")
+                minute_minus_btn.className="minute_minus_btn"
+                minute_minus_btn.type="button"
+                minute_minus_btn.innerHTML="-"
+                minute_minus_btn.onclick=function(){
+                    minute_minus_event(this,true)
+                }
+
+                var details = document.createElement("div")
+                details.className="details"
+
+                var details_content = document.createElement("div")
+                details_content.className="details_content"
+                details_content.innerHTML="미용실 가기"
+
+                var modify_details_content = document.createElement("input")
+                modify_details_content.className="modify_details_content"
+                modify_details_content.placeholder="미용실 가기"
+
+                var button_div = document.createElement("div")
+                button_div.className="button_div"
+
+                var modify_details = document.createElement("button")
+                modify_details.className="modify_details"
+                modify_details.type="button"
+                modify_details.innerHTML="수정"
+                modify_details.onclick=function(){
+                    modify_details_event(this)
+                }
+
+                var delete_details = document.createElement("button")
+                delete_details.className="delete_details"
+                delete_details.innerHTML="삭제"
+
+                var modify_details_submit = document.createElement("button")
+                modify_details_submit.className="modify_details_submit"
+                modify_details_submit.innerHTML="완료"
+
+                var modify_details_cancel = document.createElement("button")
+                modify_details_cancel.className="modify_details_cancel"
+                modify_details_cancel.innerHTML="취소"
+                modify_details_cancel.onclick=function(){
+                    modify_details_cancel_event(this)
+                }
+
+                button_div.appendChild(modify_details)
+                button_div.appendChild(delete_details)
+                button_div.appendChild(modify_details_submit)
+                button_div.appendChild(modify_details_cancel)
+
+                details.appendChild(details_content)
+                details.appendChild(modify_details_content)
+                details.appendChild(button_div)
+
+                minute_button_div.appendChild(minute_plus_btn)
+                minute_button_div.appendChild(minute_minus_btn)
+
+                hour_button_div.appendChild(hour_plus_btn)
+                hour_button_div.appendChild(hour_minus_btn)
+
+                modify_details_time.appendChild(apm)
+                modify_details_time.appendChild(hour)
+                modify_details_time.appendChild(hour_button_div)
+                modify_details_time.appendChild(minute)
+                modify_details_time.appendChild(minute_button_div)
+
+                details_div.appendChild(details_time)
+                details_div.appendChild(modify_details_time)
+                details_div.appendChild(details)
+
+                details_div_container.appendChild(details_div)
+            }   
+        }
         function make_me(){
             var id = '<%=id_value%>'
             var name = '<%=name_value%>'
@@ -337,24 +398,27 @@
     
             var day = parseInt(id.match(/\d+/)[0])
     
-            for(var i=0; i<3; i++){
-                modify_details[i].style.display='inline-block'
-                delete_details[i].style.display='inline-block'
-            }
-            input_date_div.style.display='flex'
-    
             document.getElementById("input_date").value = "";
             document.getElementById("alert_content").style.display = "none";
-            document.getElementById("hour").innerHTML="1";
-            document.getElementById("minute").innerHTML="00";
-    
+            for(var i=0; i<4; i++){
+                document.getElementsByClassName("hour")[i].innerHTML="1";
+                document.getElementsByClassName("minute")[i].innerHTML="00";
+                document.getElementsByClassName("apm")[i].innerHTML="AM"
+            }
+            for(var i=0; i<3; i++){
+                document.getElementsByClassName("modify_details_content")[i].value=""
+                modify_details_cancel_event(document.getElementsByClassName("details_div")[i])
+            }
             document.getElementById("modal_overlay").style.display = "block"
             document.getElementById("modal").style.display = "block"
             document.getElementById("modal_year").innerHTML = year
             document.getElementById("modal_month").innerHTML = month
             document.getElementById("modal_day").innerHTML = day
+            document.getElementById("year_value").value = year
+            document.getElementById("month_value").value = month
+            document.getElementById("day_value").value = day
     
-            if(member_name_div!=""){
+            if(member_name_div!=""){ //팀장이 팀원의 목록을 보는 경우
                 for(var i=0; i<3; i++){
                     modify_details[i].style.display='none'
                     delete_details[i].style.display='none'
@@ -368,40 +432,69 @@
             document.getElementById("modal").style.display = "none"
         }
     
-        function hour_plus_event() {
-            var hour_element = document.getElementById("hour").innerHTML
+        function hour_plus_event(selected,ismodify) {
+            if(ismodify){
+                var hour_div = selected.closest('.modify_details_time')
+            }
+            else{
+                var hour_div = selected.closest('#input_date_div')
+            }
+            console.log(hour_div)
+            var hour_element = hour_div.getElementsByClassName("hour")[0].innerHTML
             var hour = parseInt(hour_element, 10)
             console.log(hour)
             hour += 1
             if (hour == 13) {
                 hour = 1
             }
-            document.getElementById("hour").innerHTML = hour
+            hour_div.getElementsByClassName("hour")[0].innerHTML = hour
+            hour_div.getElementsByClassName("hour_value")[0].value= hour
         }
     
-        function hour_minus_event() {
-            var hour_element = document.getElementById("hour").innerHTML
+        function hour_minus_event(selected,ismodify) {
+            if(ismodify){
+                var hour_div = selected.closest('.modify_details_time')
+            }
+            else{
+                var hour_div = selected.closest('#input_date_div')
+            }
+            var hour_element = hour_div.getElementsByClassName("hour")[0].innerHTML
             var hour = parseInt(hour_element, 10)
-            console.log(hour)
             hour -= 1
             if (hour == 0) {
                 hour = 12
             }
-            document.getElementById("hour").innerHTML = hour
+            hour_div.getElementsByClassName("hour")[0].innerHTML = hour
+            hour_div.getElementsByClassName("hour_value")[0].value= hour
         }
     
-        function minute_plus_event() {
-            var minute_element = document.getElementById("minute").innerHTML
+        function minute_plus_event(selected,ismodify) {
+            console.log(selected)
+            if(ismodify){
+                var minute_div = selected.closest('.modify_details_time')
+            }
+            else{
+                var minute_div = selected.closest('#input_date_div')
+            }
+            console.log(minute_div)
+            var minute_element = minute_div.getElementsByClassName("minute")[0].innerHTML
             var minute = parseInt(minute_element, 10) + 1
             if (minute == 60) {
                 minute = 0
             }
             minute = (minute < 10 ? '0' : '') + minute
-            document.getElementById("minute").innerHTML = minute
+            minute_div.getElementsByClassName("minute")[0].innerHTML = minute
+            minute_div.getElementsByClassName("minute_value")[0].value= minute
         }
     
-        function minute_minus_event() {
-            var minute_element = document.getElementById("minute").innerHTML
+        function minute_minus_event(selected,ismodify) {
+            if(ismodify){
+                var minute_div = selected.closest('.modify_details_time')
+            }
+            else{
+                var minute_div = selected.closest('#input_date_div')
+            }
+            var minute_element = minute_div.getElementsByClassName("minute")[0].innerHTML
             var minute = parseInt(minute_element, 10)
             if (minute == 0) {
                 minute = 59
@@ -410,15 +503,19 @@
                 minute -= 1
             }
             minute = (minute < 10 ? '0' : '') + minute
-            document.getElementById("minute").innerHTML = minute
+            minute_div.getElementsByClassName("minute")[0].innerHTML = minute
+            minute_div.getElementsByClassName("minute_value")[0].value= minute
         }
     
-        function apm_change_event() {
-            if (document.getElementById("apm").innerHTML == "AM") {
-                document.getElementById("apm").innerHTML = "PM"
+        function apm_change_event(selected) {
+            console.log(selected)
+            console.log(selected.closest("#input_date_div"))
+            var input_date_div = selected.closest("#input_date_div")
+            if (selected.value == "AM") {
+                selected.value = "PM"
             }
             else{
-                document.getElementById("apm").innerHTML = "AM"
+                selected.value = "AM"
             }
         }
     
@@ -437,7 +534,7 @@
             details_content.style.display='none'
             modify_details.style.display='none'
             delete_details.style.display='none'
-    
+            
             modify_details_time.style.display='flex'
             modify_details_content.style.display='flex'
             modify_details_submit.style.display='inline-block'
@@ -459,6 +556,7 @@
             details_content.style.display='flex'
             modify_details.style.display='inline-block'
             delete_details.style.display='inline-block'
+    
     
             modify_details_time.style.display='none'
             modify_details_content.style.display='none'
@@ -507,7 +605,7 @@
             }
             else {
                 document.getElementById("alert_content").style.display = "none"
-                return false
+                return true
             }
         }
         
