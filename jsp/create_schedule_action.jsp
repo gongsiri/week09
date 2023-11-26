@@ -8,9 +8,9 @@
     request.setCharacterEncoding("utf-8");
     Object key_value_ob = session.getAttribute("key_value");
     int key_value = Integer.parseInt(key_value_ob.toString());
-    String apm_value = request.getParameter("apm_value");
-    int hour_value = Integer.parseInt(request.getParameter("hour_value"));
-    int minute_value = Integer.parseInt(request.getParameter("minute_value"));
+    String apm_value = request.getParameter("input_apm_value");
+    int hour_value = Integer.parseInt(request.getParameter("input_hour_value"));
+    int minute_value = Integer.parseInt(request.getParameter("input_minute_value"));
     int year_value = Integer.parseInt(request.getParameter("year_value"));
     int month_value = Integer.parseInt(request.getParameter("month_value"));
     int day_value = Integer.parseInt(request.getParameter("day_value"));
