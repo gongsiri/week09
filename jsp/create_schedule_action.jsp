@@ -48,7 +48,7 @@
 <body>
     <script>
        alert("글쓰기 완료")
-       console.log('<%=hour_value%>')
+       location.href="/week09/jsp/main.jsp"
     </script>
 
 </body>

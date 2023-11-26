@@ -59,7 +59,7 @@
         schedule_list.add(schedule_info);
     }
 
-    String sql3 = "SELECT date, content FROM schedule WHERE user_key =?";
+    String sql3 = "SELECT date, content FROM schedule WHERE user_key =? ORDER BY date";
     PreparedStatement query3 = connect.prepareStatement(sql3);
     query3.setInt(1,key_value);
     ResultSet result3 = query3.executeQuery();
@@ -142,7 +142,7 @@
                         <p id="alert_content">내용을 입력해 주세요</p> <!--경고 문구-->
                         <input type="submit" id="add" value="추가">
                     </div>
-                    <input type="text" id="input_date" placeholder="내용을 입력해 주세요." name="content_value"> <!--일정 내용-->
+                    <input type="text" id="input_date" placeholder="내용을 입력해 주세요(60자 이내)." name="content_value" maxlength="60"> <!--일정 내용-->
                 </form>
             </div>
         </div>
@@ -261,7 +261,18 @@
          
                 if(date_part == selected_day){ // 클릭된 버튼의 날짜와 저장된 스케쥴의 날짜가 같다면
                     var selected_date = schedule_detail_list[i][0].split(' ')[1] // 저장된 스케쥴의 시간 가져옴
-
+                    var selected_hour = selected_date.split(":")[0]
+                    var selected_minute = selected_date.split(":")[1]
+                    if(selected_hour >= 12){
+                        selected_hour = parseInt(selected_hour) - 12
+                        var selected_apm = "PM"
+                    }
+                    else{
+                        var selected_apm = "AM"
+                    }
+                    if(selected_hour == 0){
+                        selected_hour = 12
+                    }
                     var selected_content = schedule_detail_list[i][1] // 저장된 스케쥴의 내용 가져옴
 
                     var details_div = document.createElement("div")
@@ -269,7 +280,7 @@
 
                     var details_time = document.createElement("div")
                     details_time.className="details_time"
-                    details_time.innerHTML = selected_date
+                    details_time.innerHTML =selected_apm +" " + selected_hour + " : " + selected_minute
 
                     var modify_details_time = document.createElement("div")
                     modify_details_time.className="modify_details_time"
@@ -723,20 +734,25 @@
         }
     
         function check_event() {
+  
             var input_date = document.getElementById("input_date").value
             var input_hour_value = document.getElementsByClassName("input_hour_value")[0]
             var input_minute_value = document.getElementsByClassName("input_minute_value")[0]
             var input_apm_value = document.getElementsByClassName("input_apm_value")[0]
-
+            console.log(input_hour_value.value)
             if (input_date.trim() === "") {
                 document.getElementById("alert_content").style.display = "block"
                 return false
             }
             else {
                 document.getElementById("alert_content").style.display = "none"
-                if (input_hour_value.value === "" && input_minute_value.value === "" && input_apm_value.value === "") {
+                if (input_hour_value.value === ""){
                     input_hour_value.value = "1";
+                }
+                if(input_minute_value.value === ""){
                     input_minute_value.value = "00";
+                }
+                if(input_apm_value.value === "") {
                     input_apm_value.value = "AM";
                 }
                 return true
