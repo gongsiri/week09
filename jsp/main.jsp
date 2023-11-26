@@ -35,13 +35,18 @@
     while(result.next()){ 
         String member_id = result.getString("id");
         String member_name = result.getString("name");
+        int member_key = result.getInt("user_key");
 
         ArrayList<String> member_info = new ArrayList<String>();
         member_info.add("\""+member_id+"\"");
         member_info.add("\""+member_name+"\"");
+        member_info.add("\""+member_key+"\"");
         member_list.add(member_info);
     }
 
+    if(request.getParameter("member_key") != null){
+        key_value = Integer.parseInt(request.getParameter("member_key"));
+    }
     String sql2 = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS formatted_date, COUNT(*) AS schedule_count FROM schedule WHERE user_key = ? GROUP BY formatted_date";
     PreparedStatement query2 = connect.prepareStatement(sql2);
     query2.setInt(1, key_value);
@@ -59,7 +64,7 @@
         schedule_list.add(schedule_info);
     }
 
-    String sql3 = "SELECT date, content FROM schedule WHERE user_key =? ORDER BY date";
+    String sql3 = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS formatted_date, HOUR(date) AS hour, MINUTE(date) AS minute, content FROM schedule WHERE user_key =? ORDER BY date"; // 고치자 월 년 일 다 꺼내오자
     PreparedStatement query3 = connect.prepareStatement(sql3);
     query3.setInt(1,key_value);
     ResultSet result3 = query3.executeQuery();
@@ -67,10 +72,14 @@
     ArrayList<ArrayList<String>> schedule_detail_list = new ArrayList<ArrayList<String>>();
 
     while(result3.next()){
-        String date = result3.getString("date");
+        String formatted_date = result3.getString("formatted_date");
+        String hour = result3.getString("hour");
+        String minute = result3.getString("minute");
         String content = result3.getString("content");
         ArrayList<String> schedule_detail_info = new ArrayList<String>();
-        schedule_detail_info.add("\""+date+"\"");
+        schedule_detail_info.add("\""+formatted_date+"\"");
+        schedule_detail_info.add("\""+hour+"\"");
+        schedule_detail_info.add("\""+minute+"\"");
         schedule_detail_info.add("\""+content+"\"");
         schedule_detail_list.add(schedule_detail_info);
     }
@@ -190,6 +199,7 @@
         var today_day = today.getDate()
     
         window.onload = function () {
+            console.log("냥냥")
             make_month() // month 버튼들 만들기
             document.getElementById("year").innerHTML = today_year // 년도에 오늘 날짜 넣어놓기(초기값)
             var btn = document.getElementById("month" + today_month) // 오늘 월인 버튼 가져옴
@@ -242,6 +252,7 @@
             var year = parseInt(part[0]);
             var month = parseInt(part[1]);
             var day = parseInt(part[2]);
+           
 
             var details_div_container = document.getElementsByClassName("details_div_container")[0]
             details_div_container.className="details_div_container"
@@ -257,12 +268,11 @@
             var schedule_detail_list = <%=schedule_detail_list%>
 
             for(var i=0; i<schedule_detail_list.length; i++){
-                var date_part = schedule_detail_list[i][0].split(' ')[0]; // list에 저장된 스케쥴의 date에서 날짜만 빼옴
+                var date_part = schedule_detail_list[i][0]// list에 저장된 스케쥴의 date에서 날짜만 빼옴
          
                 if(date_part == selected_day){ // 클릭된 버튼의 날짜와 저장된 스케쥴의 날짜가 같다면
-                    var selected_date = schedule_detail_list[i][0].split(' ')[1] // 저장된 스케쥴의 시간 가져옴
-                    var selected_hour = selected_date.split(":")[0]
-                    var selected_minute = selected_date.split(":")[1]
+                    var selected_hour = schedule_detail_list[i][1]
+                    var selected_minute = schedule_detail_list[i][2]
                     if(selected_hour >= 12){
                         selected_hour = parseInt(selected_hour) - 12
                         var selected_apm = "PM"
@@ -273,7 +283,7 @@
                     if(selected_hour == 0){
                         selected_hour = 12
                     }
-                    var selected_content = schedule_detail_list[i][1] // 저장된 스케쥴의 내용 가져옴
+                    var selected_content = schedule_detail_list[i][3] // 저장된 스케쥴의 내용 가져옴
 
                     var details_div = document.createElement("div")
                     details_div.className="details_div"
@@ -408,6 +418,12 @@
         }
 
         function open_modal_event(year, month, day) {
+            if(day < 10){
+                day = day - '0'
+            }
+            if(month < 10){
+                month = month - '0'
+            }
             console.log(year)
             console.log(month)
             console.log(day)
@@ -505,8 +521,13 @@
                 member_id.className="member_id"
                 member_id.innerHTML=member_list[i][0]
                 
+                var member_key = document.createElement("input")
+                member_key.type="hidden"
+                member_key.className="member_key"
+                member_key.value = member_list[i][2]
                 button.appendChild(member_name)
                 button.appendChild(member_id)
+                button.appendChild(member_key)
 
                 document.getElementById("member_list").appendChild(button)
             }
@@ -544,12 +565,9 @@
             document.getElementById("year").innerHTML = year
             delete_calender()
             var month = document.getElementsByClassName("month")
-            for(var i=0; i<month.length; i++){ // 현재 선택되어 있는 월을 찾음
-                if(month[i].style.backgroundColor != "white"){
-                    var selected_month = month[i]
-                }
+            for(var i=0; i<month.length; i++){ 
+                month[i].style.backgroundColor ="white"
             }
-            make_calender(selected_month) // 선택되어 있는 월 그대로 가져오게(초기값)
         }
     
         function next_year_event() {
@@ -558,12 +576,9 @@
             document.getElementById("year").innerHTML = year
             delete_calender()
             var month = document.getElementsByClassName("month")
-            for(var i=0; i<month.length; i++){ // 현재 선택되어 있는 월을 찾음
-                if(month[i].style.backgroundColor != "white"){
-                    var selected_month = month[i]
-                }
+            for(var i=0; i<month.length; i++){ 
+                month[i].style.backgroundColor ="white"
             }
-            make_calender(selected_month) // 선택되어 있는 월 그대로 가져오게(초기값)
         }
     
      
@@ -703,9 +718,23 @@
         }
     
         function select_member_event(selected){
+            console.log(selected)
             var member_name = selected.getElementsByClassName('member_name')[0].innerHTML
             var member_id = selected.getElementsByClassName('member_id')[0].innerHTML
-    
+            var member_key = selected.getElementsByClassName("member_key")[0].value;
+            console.log(member_key)
+
+            var form = document.createElement("form")
+            form.action="/week09/jsp/main.jsp"
+
+            var member_key_input = document.createElement("input")
+            member_key_input.type = "hidden"
+            member_key_input.name = "member_key"
+            member_key_input.value = member_key
+            form.appendChild(member_key_input)
+
+            document.body.appendChild(form)
+            form.submit()
     
             var member_info = document.getElementById("member_info")
             var member_name_div=document.getElementById("member_name_div")
