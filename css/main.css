@@ -92,15 +92,16 @@ td{
 #hidden_menu{
     position: absolute;
     top:0;
-    width:240px;
-    right:-240px;
+    width:260px;
+    right:-260px;
     height: 100vh;
+    overflow: hidden;
     background-color: white;
     z-index: 3;
     transition: 0.3s;
 }
 #hidden_menu_top{
-    width:240px;
+    width:260px;
     justify-content: end;
     display: flex;
     height: 80px;
@@ -151,7 +152,9 @@ td{
     margin-left:20px;
     margin-right: 20px;
     margin-top:20px;
+    max-height: 500px;
     display: none;
+    overflow-y: auto;
 }
 .member{
     margin-bottom:10px;

@@ -4,6 +4,7 @@
 body{
     margin:0;
     position:relative;
+    overflow-x:hidden;
 }
 header{
     height: 80px;

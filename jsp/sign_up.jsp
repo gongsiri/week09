@@ -58,7 +58,8 @@
                 alert("아이디를 제대로 입력해 주세요")
                 return false
             }
-            indow.open("/week09/jsp/id_duplication_check_action.jsp?id_value="+ id,"width=400","height=350")
+            
+            window.open('/week09/jsp/id_duplication_check_action.jsp?id_value='+ id,'','width=500,height=350')
 
         }
     </script>
