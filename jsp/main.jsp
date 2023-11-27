@@ -224,7 +224,6 @@
             }
             is_schedule() // 스케줄 있으면 원 & 숫자 나타나게
             if('<%=key_value%>'!= '<%=session.getAttribute("key_value")%>'){
-    
                 member_info.style.display='flex'
                 member_name_div.innerHTML= '<%=member_name_input%>'
                 member_id_div.innerHTML= '<%=member_id_input%>'
