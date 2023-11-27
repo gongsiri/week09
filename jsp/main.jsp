@@ -21,6 +21,9 @@
     String rank_value = String.valueOf(rank_value_ob);
     String department_value = String.valueOf(department_value_ob);
 
+    String member_name_input = "";
+    String member_id_input = "";
+
     Class.forName("com.mysql.jdbc.Driver");
     Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
 
@@ -46,6 +49,8 @@
 
     if(request.getParameter("member_key") != null){
         key_value = Integer.parseInt(request.getParameter("member_key"));
+        member_name_input = request.getParameter("member_name_input");
+        member_id_input = request.getParameter("member_id_input");
     }
     String sql2 = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS formatted_date, COUNT(*) AS schedule_count FROM schedule WHERE user_key = ? GROUP BY formatted_date";
     PreparedStatement query2 = connect.prepareStatement(sql2);
@@ -199,6 +204,11 @@
         var today_day = today.getDate()
     
         window.onload = function () {
+            console.log('<%=key_value%>')
+            console.log(typeof '<%=key_value%>')
+            console.log('<%=session.getAttribute("key_value")%>')
+            console.log(typeof '<%=session.getAttribute("key_value")%>')
+           
             console.log("냥냥")
             make_month() // month 버튼들 만들기
             document.getElementById("year").innerHTML = today_year // 년도에 오늘 날짜 넣어놓기(초기값)
@@ -213,6 +223,14 @@
                 document.getElementById("member_list").style.display='none'
             }
             is_schedule() // 스케줄 있으면 원 & 숫자 나타나게
+            if('<%=key_value%>'!= '<%=session.getAttribute("key_value")%>'){
+    
+                member_info.style.display='flex'
+                member_name_div.innerHTML= '<%=member_name_input%>'
+                member_id_div.innerHTML= '<%=member_id_input%>'
+                hidden_menu.style.right = '-240px'
+                dark_background.style.display = 'none'
+            }
         }
 
         function is_schedule(){ // 스케줄 있으면 원 & 숫자 나타나게
@@ -273,6 +291,9 @@
                 if(date_part == selected_day){ // 클릭된 버튼의 날짜와 저장된 스케쥴의 날짜가 같다면
                     var selected_hour = schedule_detail_list[i][1]
                     var selected_minute = schedule_detail_list[i][2]
+                    if(selected_minute < 10){
+                        selected_minute = parseInt(selected_minute) + '0'
+                    }
                     if(selected_hour >= 12){
                         selected_hour = parseInt(selected_hour) - 12
                         var selected_apm = "PM"
@@ -284,6 +305,7 @@
                         selected_hour = 12
                     }
                     var selected_content = schedule_detail_list[i][3] // 저장된 스케쥴의 내용 가져옴
+                    
 
                     var details_div = document.createElement("div")
                     details_div.className="details_div"
@@ -291,6 +313,7 @@
                     var details_time = document.createElement("div")
                     details_time.className="details_time"
                     details_time.innerHTML =selected_apm +" " + selected_hour + " : " + selected_minute
+
 
                     var modify_details_time = document.createElement("div")
                     modify_details_time.className="modify_details_time"
@@ -412,8 +435,19 @@
                     details_div.appendChild(details)
 
                     details_div_container.appendChild(details_div) 
+
+                    if('<%=key_value%>'!= '<%=session.getAttribute("key_value")%>'){ //팀장이 팀원의 목록을 보는 경우
+                    var modify_details = document.getElementsByClassName("modify_details")
+                    var delete_details = document.getElementsByClassName("delete_details")
+                    for(var i=0; i<modify_details.length; i++){
+                        modify_details[i].style.display="none"
+                        delete_details[i].style.display="none"
+                    }
+                        input_date_div.style.display='none'
+                    }
                 } 
             }
+         
             open_modal_event(year,month,day)
         }
 
@@ -428,7 +462,9 @@
             console.log(month)
             console.log(day)
             var member_name_div = document.getElementById("member_name_div").innerHTML
-
+            var modify_details = document.getElementsByClassName("modify_details")
+            var delete_details = document.getElementsByClassName("delete_details")
+            var input_date_div = document.getElementById("input_date_div")
             document.getElementById("modal_overlay").style.display = "block"
             document.getElementById("modal").style.display = "block"
             document.getElementById("modal_year").innerHTML = year
@@ -437,14 +473,7 @@
             document.getElementById("year_value").value = year
             document.getElementById("month_value").value = month
             document.getElementById("day_value").value = day
-    
-            if(member_name_div!=""){ //팀장이 팀원의 목록을 보는 경우
-                for(var i=0; i<3; i++){
-                    modify_details[i].style.display='none'
-                    delete_details[i].style.display='none'
-                }
-                input_date_div.style.display='none'
-            }
+            
 
         }
     
@@ -520,6 +549,7 @@
                 var member_id = document.createElement("div")
                 member_id.className="member_id"
                 member_id.innerHTML=member_list[i][0]
+
                 
                 var member_key = document.createElement("input")
                 member_key.type="hidden"
@@ -527,6 +557,7 @@
                 member_key.value = member_list[i][2]
                 button.appendChild(member_name)
                 button.appendChild(member_id)
+
                 button.appendChild(member_key)
 
                 document.getElementById("member_list").appendChild(button)
@@ -722,6 +753,8 @@
             var member_name = selected.getElementsByClassName('member_name')[0].innerHTML
             var member_id = selected.getElementsByClassName('member_id')[0].innerHTML
             var member_key = selected.getElementsByClassName("member_key")[0].value;
+    
+
             console.log(member_key)
 
             var form = document.createElement("form")
@@ -732,6 +765,19 @@
             member_key_input.name = "member_key"
             member_key_input.value = member_key
             form.appendChild(member_key_input)
+
+            var member_id_input = document.createElement("input")
+            member_id_input.type = "hidden"
+            member_id_input.name = "member_id_input"
+            member_id_input.value = member_id
+            form.appendChild(member_id_input)
+
+            var member_name_input = document.createElement("input")
+            member_name_input.type = "hidden"
+            member_name_input.name = "member_name_input"
+            member_name_input.value = member_name
+            form.appendChild(member_name_input)
+
 
             document.body.appendChild(form)
             form.submit()
@@ -750,16 +796,7 @@
         }
     
         function select_me_event(){
-            var hidden_menu = document.getElementById("hidden_menu")
-            var dark_background = document.getElementById("dark_background")
-            var member_info = document.getElementById("member_info")
-            var member_name_div = document.getElementById("member_name_div")
-    
-            hidden_menu.style.right = '-240px'
-            dark_background.style.display = 'none'
-            member_info.style.display='none'
-            member_name_div.innerHTML=''
- 
+            location.href="/week09/jsp/main.jsp"
         }
     
         function check_event() {
