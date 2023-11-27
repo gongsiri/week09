@@ -227,7 +227,7 @@
                 member_info.style.display='flex'
                 member_name_div.innerHTML= '<%=member_name_input%>'
                 member_id_div.innerHTML= '<%=member_id_input%>'
-                hidden_menu.style.right = '-240px'
+                hidden_menu.style.right = '-260px'
                 dark_background.style.display = 'none'
             }
         }
@@ -291,7 +291,7 @@
                     var selected_hour = schedule_detail_list[i][1]
                     var selected_minute = schedule_detail_list[i][2]
                     if(selected_minute < 10){
-                        selected_minute = parseInt(selected_minute) + '0'
+                        selected_minute = '0'+ parseInt(selected_minute) 
                     }
                     if(selected_hour >= 12){
                         selected_hour = parseInt(selected_hour) - 12
@@ -327,7 +327,7 @@
 
                     var hour = document.createElement("div")
                     hour.className="hour"
-                    hour.innerHTML="1"
+                    hour.innerHTML=selected_hour
 
                     var hour_button_div = document.createElement("div")
                     hour_button_div.className="hour_button_div"
@@ -350,7 +350,7 @@
 
                     var minute = document.createElement("div")
                     minute.className="minute"
-                    minute.innerHTML="00"
+                    minute.innerHTML=selected_minute
 
                     var minute_button_div = document.createElement("div")
                     minute_button_div.className="minute_button_div"
@@ -573,7 +573,7 @@
                 dark_background.style.display = 'block'
             }
             else {
-                hidden_menu.style.right = '-240px'
+                hidden_menu.style.right = '-260px'
                 dark_background.style.display = 'none'
             }
         }
@@ -790,7 +790,7 @@
             member_info.style.display='flex'
             member_name_div.innerHTML= member_name
             member_id_div.innerHTML= member_id
-            hidden_menu.style.right = '-240px'
+            hidden_menu.style.right = '-260px'
             dark_background.style.display = 'none'
         }
     
