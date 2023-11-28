@@ -69,7 +69,7 @@
         schedule_list.add(schedule_info);
     }
 
-    String sql3 = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS formatted_date, HOUR(date) AS hour, MINUTE(date) AS minute, content FROM schedule WHERE user_key =? ORDER BY date"; // 고치자 월 년 일 다 꺼내오자
+    String sql3 = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS formatted_date, HOUR(date) AS hour, MINUTE(date) AS minute, content, schedule_key FROM schedule WHERE user_key =? ORDER BY date"; // 고치자 월 년 일 다 꺼내오자
     PreparedStatement query3 = connect.prepareStatement(sql3);
     query3.setInt(1,key_value);
     ResultSet result3 = query3.executeQuery();
@@ -81,11 +81,14 @@
         String hour = result3.getString("hour");
         String minute = result3.getString("minute");
         String content = result3.getString("content");
+        int schedule_key = result3.getInt("schedule_key");
         ArrayList<String> schedule_detail_info = new ArrayList<String>();
         schedule_detail_info.add("\""+formatted_date+"\"");
         schedule_detail_info.add("\""+hour+"\"");
         schedule_detail_info.add("\""+minute+"\"");
         schedule_detail_info.add("\""+content+"\"");
+        schedule_detail_info.add(String.valueOf(schedule_key));
+
         schedule_detail_list.add(schedule_detail_info);
     }
 %>
@@ -223,12 +226,13 @@
                 document.getElementById("member_list").style.display='none'
             }
             is_schedule() // 스케줄 있으면 원 & 숫자 나타나게
+            
             if('<%=key_value%>'!= '<%=session.getAttribute("key_value")%>'){
-                member_info.style.display='flex'
-                member_name_div.innerHTML= '<%=member_name_input%>'
-                member_id_div.innerHTML= '<%=member_id_input%>'
-                hidden_menu.style.right = '-260px'
-                dark_background.style.display = 'none'
+                document.getElementById("member_info").style.display='flex'
+                document.getElementById("member_name_div").innerHTML= '<%=member_name_input%>'
+                document.getElementById("member_id_div").innerHTML= '<%=member_id_input%>'
+                document.getElementById("hidden_menu").style.right = '-260px'
+                document.getElementById("dark_background").style.display = 'none'
             }
         }
 
@@ -265,59 +269,64 @@
         }
  
         function make_schedule(id){ // 버튼 클릭 시
-            var part = id.split("-") // id는 2023-09-21 이런 형식
-            var year = parseInt(part[0]);
-            var month = parseInt(part[1]);
-            var day = parseInt(part[2]);
-           
-
-            var details_div_container = document.getElementsByClassName("details_div_container")[0]
+            if('<%=key_value%>'!= '<%=session.getAttribute("key_value")%>'){
+                document.getElementById("input_date_div").style.display='none'
+            }
+            var part = id.split("-") // id는 2023-7-2 이런 형식
+            var year = parseInt(part[0]); // 클릭한 버튼의 년도
+            var month = parseInt(part[1]); 
+            var day = parseInt(part[2]); 
+   
+            var details_div_container = document.getElementsByClassName("details_div_container")[0] // 일정 전체를 담는 큰 컨테이너
             details_div_container.className="details_div_container"
 
-            if(day < 10){
+            if(day < 10){ // 10일보다 아래면 앞에 0을 붙여줌
                 day = '0' + day
             }
             if(month < 10){
                 month = '0' + month
             }
 
-            selected_day = year + "-" + month + "-" + day // 클릭된 버튼의 날짜
+            selected_date = year + "-" + month + "-" + day // 클릭된 버튼의 날짜 2023-07-02 이런 형식
             var schedule_detail_list = <%=schedule_detail_list%>
 
-            for(var i=0; i<schedule_detail_list.length; i++){
-                var date_part = schedule_detail_list[i][0]// list에 저장된 스케쥴의 date에서 날짜만 빼옴
+            for(var i=0; i<schedule_detail_list.length; i++){ // 전체 스케줄 개수만큼
+                var date = schedule_detail_list[i][0]// 저장된 스케줄의 날짜
          
-                if(date_part == selected_day){ // 클릭된 버튼의 날짜와 저장된 스케쥴의 날짜가 같다면
-                    var selected_hour = schedule_detail_list[i][1]
-                    var selected_minute = schedule_detail_list[i][2]
-                    if(selected_minute < 10){
+                if(date == selected_date){ // 클릭된 버튼의 날짜와 저장된 스케쥴의 날짜가 같다면
+                    var selected_hour = schedule_detail_list[i][1] // 저장된 스케줄의 시
+                    var selected_minute = schedule_detail_list[i][2] // 저장된 스케줄의 분
+                    var selected_key = schedule_detail_list[i][4] // 저장된 스케줄의 키
+            
+                    if(selected_minute < 10){ // 02가 아니라 2 이런식으로 저장되기 때문에
                         selected_minute = '0'+ parseInt(selected_minute) 
                     }
-                    if(selected_hour >= 12){
+
+                    if(selected_hour >= 12){ // 시간이 12 이상이면 PM으로 바뀌게
                         selected_hour = parseInt(selected_hour) - 12
                         var selected_apm = "PM"
                     }
-                    else{
+                    else{ // 시간이 12 미만이면 AM
                         var selected_apm = "AM"
                     }
                     if(selected_hour == 0){
                         selected_hour = 12
                     }
-                    var selected_content = schedule_detail_list[i][3] // 저장된 스케쥴의 내용 가져옴
+
+                    var selected_content = schedule_detail_list[i][3] // 저장된 스케쥴의 내용
                     
 
-                    var details_div = document.createElement("div")
+                    var details_div = document.createElement("div") // 각 일정 전체를 담는 div (핑크 테두리)
                     details_div.className="details_div"
 
-                    var details_time = document.createElement("div")
+                    var details_time = document.createElement("div") // 일정의 시간
                     details_time.className="details_time"
                     details_time.innerHTML =selected_apm +" " + selected_hour + " : " + selected_minute
 
-
-                    var modify_details_time = document.createElement("div")
+                    var modify_details_time = document.createElement("div") // 수정 클릭시 일정의 시간
                     modify_details_time.className="modify_details_time"
 
-                    var apm = document.createElement("button")
+                    var apm = document.createElement("button") // 수정 클릭시 apm 버튼
                     apm.className="apm"
                     apm.type="button"
                     apm.innerHTML="AM"
@@ -325,18 +334,18 @@
                         apm_change_event(this)
                     }
 
-                    var hour = document.createElement("div")
+                    var hour = document.createElement("div") // 수정 클릭시 일정의 시
                     hour.className="hour"
                     hour.innerHTML=selected_hour
 
-                    var hour_button_div = document.createElement("div")
+                    var hour_button_div = document.createElement("div") 
                     hour_button_div.className="hour_button_div"
 
                     var hour_plus_btn = document.createElement("button")
                     hour_plus_btn.className="hour_plus_btn"
                     hour_plus_btn.type="button"
                     hour_plus_btn.innerHTML="+"
-                    hour_plus_btn.onclick=function(){
+                    hour_plus_btn.onclick=function(){ // 수정 클릭시 라는 걸 알려주기 위해 true
                         hour_plus_event(this,true)
                     }
 
@@ -348,7 +357,7 @@
                         hour_minus_event(this,true)
                     }
 
-                    var minute = document.createElement("div")
+                    var minute = document.createElement("div") // 수정 클릭시 일정의 분
                     minute.className="minute"
                     minute.innerHTML=selected_minute
 
@@ -371,21 +380,25 @@
                         minute_minus_event(this,true)
                     }
 
-                    var details = document.createElement("div")
+                    var details = document.createElement("div") // 수정 클릭시 나오는 아래 부분
                     details.className="details"
 
-                    var details_content = document.createElement("div")
+                    var details_content = document.createElement("div") // 일정의 내용 
                     details_content.className="details_content"
                     details_content.innerHTML=selected_content
 
-                    var modify_details_content = document.createElement("input")
+                    var modify_details_content = document.createElement("input") // 수정 클릭시 일정의 내용 입력 부분
+                    modify_details_content.type="text"
                     modify_details_content.className="modify_details_content"
+                    modify_details_content.name = "modify_details_content"
+                    modify_details_content.value = selected_content
                     modify_details_content.placeholder=selected_content
 
-                    var button_div = document.createElement("div")
+
+                    var button_div = document.createElement("div") // 수정 삭제 버튼 div
                     button_div.className="button_div"
 
-                    var modify_details = document.createElement("button")
+                    var modify_details = document.createElement("button") 
                     modify_details.className="modify_details"
                     modify_details.type="button"
                     modify_details.innerHTML="수정"
@@ -396,10 +409,71 @@
                     var delete_details = document.createElement("button")
                     delete_details.className="delete_details"
                     delete_details.innerHTML="삭제"
+                    delete_details.onclick=function(){
+                        var key_input = document.createElement("input")
+                        key_input.type="hidden"
+                        key_input.name="key_input"
+                        key_input.value=selected_key
 
-                    var modify_details_submit = document.createElement("button")
+                        var form = document.createElement("form")
+                        form.action="/week09/jsp/delete_schedule.jsp"
+                        
+                        form.appendChild(key_input)
+
+                        document.body.appendChild(form)
+
+                        form.submit();
+                    }
+
+                    var modify_details_submit = document.createElement("button") // 수정 하고 제출
                     modify_details_submit.className="modify_details_submit"
                     modify_details_submit.innerHTML="완료"
+                    modify_details_submit.onclick=function(){
+                        var details_div = this.closest(".details_div")
+                        var modify_hour = details_div.getElementsByClassName("hour")[0].innerHTML
+                        var modify_apm = details_div.getElementsByClassName("apm")[0].innerHTML
+                        var modify_minute = details_div.getElementsByClassName("minute")[0].innerHTML
+                        var modify_details_content = details_div.getElementsByClassName("modify_details_content")[0]
+
+                        var key_input = document.createElement("input")
+                        key_input.type="hidden"
+                        key_input.name="key_input"
+                        key_input.value=selected_key
+                        
+                        var date_input = document.createElement("input")
+                        date_input.type="hidden"
+                        date_input.name="date_input"
+                        date_input.value=selected_date
+
+                        var hour_input = document.createElement("input")
+                        hour_input.type="hidden"
+                        hour_input.name = "hour_input"
+                        hour_input.value= modify_hour
+
+                        var apm_input = document.createElement("input")
+                        apm_input.type="hidden"
+                        apm_input.name = "apm_input"
+                        apm_input.value= modify_apm
+
+                        var minute_input = document.createElement("input")
+                        minute_input.type="hidden"
+                        minute_input.name = "minute_input"
+                        minute_input.value= modify_minute
+
+                        var form = document.createElement("form")
+                        form.action="/week09/jsp/modify_schedule.jsp"
+
+                        form.appendChild(hour_input)
+                        form.appendChild(apm_input)
+                        form.appendChild(minute_input)
+                        form.appendChild(modify_details_content)
+                        form.appendChild(key_input)
+                        form.appendChild(date_input)
+
+                        document.body.appendChild(form)
+
+                        form.submit();
+                    }
 
                     var modify_details_cancel = document.createElement("button")
                     modify_details_cancel.className="modify_details_cancel"
@@ -435,18 +509,18 @@
 
                     details_div_container.appendChild(details_div) 
 
+                    console.log('<%=key_value%>'+"냐야")
+                    console.log('<%=session.getAttribute("key_value")%>' +"shsh")
                     if('<%=key_value%>'!= '<%=session.getAttribute("key_value")%>'){ //팀장이 팀원의 목록을 보는 경우
-                    var modify_details = document.getElementsByClassName("modify_details")
-                    var delete_details = document.getElementsByClassName("delete_details")
-                    for(var i=0; i<modify_details.length; i++){
-                        modify_details[i].style.display="none"
-                        delete_details[i].style.display="none"
-                    }
-                        input_date_div.style.display='none'
+                        var modify_details = document.getElementsByClassName("modify_details")
+                        var delete_details = document.getElementsByClassName("delete_details")
+                        for(var i=0; i<modify_details.length; i++){ // 수정 삭제 버튼 안 보이게
+                            modify_details[i].style.display="none"
+                            delete_details[i].style.display="none"
+                        }
                     }
                 } 
             }
-         
             open_modal_event(year,month,day)
         }
 
@@ -823,7 +897,7 @@
                 return true
             }
         }
-        
+
         function make_calender(selected_month) {
             var table = document.getElementById("calender")
             var selected_year = document.getElementById("year").innerHTML
