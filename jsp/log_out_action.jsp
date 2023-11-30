@@ -1,5 +1,13 @@
 <%@ page language="java" contentType="text/html" pageEncoding="utf-8" %>
+<%@ page import="javax.servlet.http.HttpSession" %>
 <%
+
+    request.setCharacterEncoding("utf-8");
+    Object id_value_ob = session.getAttribute("id_value");
+    if(id_value_ob == null){
+        response.sendRedirect("/week09/jsp/log_in.jsp");
+    }
+
     session.invalidate();
 %>
 <head>

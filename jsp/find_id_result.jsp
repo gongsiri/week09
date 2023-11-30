@@ -10,6 +10,14 @@
     String id_value="";
     int check=0;
 
+    Pattern name_pattern = Pattern.compile("^[가-힣]{2,5}$");
+    Pattern phone_pattern = Pattern.compile("^01[0179][0-9]{7,8}$");
+
+    if(!name_pattern.matcher(name_value).matches() || !phone_pattern.matcher(phone_value).matches()){
+        response.sendRedirect("/week09/jsp/find_id.jsp");
+        return;
+    }
+
     Class.forName("com.mysql.jdbc.Driver");
     Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
 

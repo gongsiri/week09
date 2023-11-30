@@ -6,13 +6,24 @@
 <%@ page import="java.util.ArrayList" %>
 
 <%
-    //session.getAttribute는 Object 자료형이기에 String으로 형변환 해줌
+    Object user_key_ob = session.getAttribute("key_value");
+    if(user_key_ob == null){
+        response.sendRedirect("/week09/jsp/log_in.jsp");
+        return;
+    }
+    int user_key = Integer.parseInt(user_key_ob.toString());
+    int session_value = Integer.parseInt(request.getParameter("session_input"));
     String apm_value = request.getParameter("apm_input");
     int hour_value =Integer.parseInt(request.getParameter("hour_input"));
     int minute_value = Integer.parseInt(request.getParameter("minute_input"));
-    String content_value = request.getParameter("modify_details_content");
+    String content_value = request.getParameter("content_input");
     int key_value = Integer.parseInt(request.getParameter("key_input"));
     String day_value = request.getParameter("date_input");
+
+    if(user_key!=session_value){
+        response.sendRedirect("/week09/jsp/log_in.jsp");
+        return;
+    }
 
     if("PM".equals(apm_value)){
         if(hour_value !=12){
@@ -27,17 +38,13 @@
 
     Class.forName("com.mysql.jdbc.Driver");
     Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
-
-    String sql = "DELETE FROM schedule WHERE schedule_key=?";
+    
+    String sql = "UPDATE schedule SET date=?, content=? WHERE schedule_key=?"; 
     PreparedStatement query = connect.prepareStatement(sql);
-    query.setInt(1, key_value);
+    query.setString(1, date_value);
+    query.setString(2, content_value);
+    query.setInt(3, key_value);
     query.executeUpdate();
-
-    String sql2 = "INSERT INTO SET schedule (date, content) VALUES (?, ?)"; 
-    PreparedStatement query2 = connect.prepareStatement(sql2);
-    query2.setString(1, date_value);
-    query2.setString(2, content_value);
-    query2.executeUpdate();
 
 %>
 <head>

@@ -6,16 +6,32 @@
 
 <%
     request.setCharacterEncoding("utf-8");
+    Object user_key_ob = session.getAttribute("key_value");
+    if(user_key_ob == null){
+        response.sendRedirect("/week09/jsp/log_in.jsp");
+        return;
+    }
+    int user_key = Integer.parseInt(user_key_ob.toString());
+    int session_value = Integer.parseInt(request.getParameter("session_input"));
     int schedule_key = Integer.parseInt(request.getParameter("key_input"));
 
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
-
-    String sql = "DELETE FROM schedule WHERE schedule_key= ?";
-    PreparedStatement query = connect.prepareStatement(sql);
-    query.setInt(1, schedule_key);
-
-    query.executeUpdate();
+    if(user_key != session_value){
+        response.sendRedirect("/week09/jsp/log_in.jsp");
+        return;
+    }
+    try{
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
+    
+        String sql = "DELETE FROM schedule WHERE schedule_key= ?";
+        PreparedStatement query = connect.prepareStatement(sql);
+        query.setInt(1, schedule_key);
+    
+        query.executeUpdate();
+    }catch(Exception e){
+        e.printStackTrace();
+    }
+  
 %>
 
 <head>

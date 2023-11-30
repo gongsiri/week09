@@ -7,6 +7,7 @@
 
 <%
     //session.getAttribute는 Object 자료형이기에 String으로 형변환 해줌
+    Object key_value_ob = session.getAttribute("key_value");
     Object id_value_ob = session.getAttribute("id_value");
     Object pw_value_ob = session.getAttribute("pw_value");
     Object phone_value_ob = session.getAttribute("phone_value");
@@ -14,6 +15,7 @@
     Object rank_value_ob = session.getAttribute("rank_value");
     Object department_value_ob = session.getAttribute("department_value");
 
+    int key_value = Integer.parseInt(key_value_ob.toString());
     String id_value = String.valueOf(id_value_ob);
     String pw_value = String.valueOf(pw_value_ob);
     String phone_value = String.valueOf(phone_value_ob);
@@ -107,7 +109,7 @@
                     <label for="design">디자인팀</label><input type="radio" id="design" name="department_value" value="디자인팀">
                 </div>
             </div>
-
+            <input type="hidden" name="session_input" value="<%=key_value%>">
             <div class="submit_btn_div">
                 <input type="submit" value="수정하기" id="sign_up" onclick="modify_info()">
                 <input type="button" value="탈퇴하기" id="withdraw" onclick="location.href='/week09/jsp/resign_action.jsp'">

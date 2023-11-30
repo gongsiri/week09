@@ -20,11 +20,11 @@
             var id_pattern = /^[a-zA-Z0-9]{6,20}$/
             var pw_pattern = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{6,30}$/
             
-            if(id.trim()==="" || !id_pattern.test(id)){
+            if(!id_pattern.test(id)){
                 alert("아이디를 제대로 입력해 주세요")
                 return false
             }
-            if(pw.trim()==="" || !pw_pattern.test(pw)){
+            if(!pw_pattern.test(pw)){
                 alert("비밀번호를 제대로 입력해 주세요")
                 return false
             }

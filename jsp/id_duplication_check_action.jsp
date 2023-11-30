@@ -7,18 +7,28 @@
 <%
     String id_value = request.getParameter("id_value");
     int check = 0; // 중복 여부
-
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
-
-    //입력된 id를 기준으로 유저들 가져옴
-    String sql = "SELECT * FROM user WHERE id=?";
-    PreparedStatement query = connect.prepareStatement(sql);
-    query.setString(1, id_value);
-    ResultSet result = query.executeQuery();
-    while(result.next()){ // 유저가 있으면 check = 1
-        check=1;
+    
+    Pattern id_pattern = Pattern.compile("^[a-zA-Z0-9]{6,20}$");
+    if(!id_pattern.matcher(id_value).matches()){
+        response.senRedirect("/week09/jsp/sign_up.jsp");
+        return;
     }
+    try{
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
+
+        //입력된 id를 기준으로 유저들 가져옴
+        String sql = "SELECT * FROM user WHERE id=?";
+        PreparedStatement query = connect.prepareStatement(sql);
+        query.setString(1, id_value);
+        ResultSet result = query.executeQuery();
+        while(result.next()){ // 유저가 있으면 check = 1
+            check=1;
+        }
+    }catch(Exception e){
+        e.printStackTrace();
+    }
+    
 %>
 
 <head>

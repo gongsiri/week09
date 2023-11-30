@@ -6,14 +6,24 @@
 
 <%
     request.setCharacterEncoding("utf-8");
-    Object id_value_ob = session.getAttribute("id_value");
-    String id_value = String.valueOf(id_value_ob);
+    Object user_key_ob = session.getAttribute("key_value");
+    if(user_key_ob == null){
+        response.sendRedirect("/week09/jsp/log_in.jsp");
+        return;
+    }
+    int user_key = Integer.parseInt(user_key_ob.toString());
+    int session_value = Integer.parseInt(request.getParameter("session_input"));
+    String id_value = request.getParameter("id_value");
     String pw_value = request.getParameter("pw_value");
     String phone_value = request.getParameter("phone_value");
     String name_value = request.getParameter("name_value");
     String rank_value = request.getParameter("rank_value");
     String department_value = request.getParameter("department_value");
 
+    if(user_key != session_value){
+        response.sendRedirect("/week09/jsp/log_in.jsp");
+        return;
+    }
     Class.forName("com.mysql.jdbc.Driver");
     Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
     

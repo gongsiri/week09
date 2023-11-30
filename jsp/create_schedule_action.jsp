@@ -7,7 +7,12 @@
 <%
     request.setCharacterEncoding("utf-8");
     Object key_value_ob = session.getAttribute("key_value");
+    if(key_value_ob == null){
+        response.sendRedirect("/week09/jsp/log_in.jsp");
+        return;
+    }
     int key_value = Integer.parseInt(key_value_ob.toString());
+    int session_value = Integer.parseInt(request.getParameter("session_value"));
     String apm_value = request.getParameter("input_apm_value");
     int hour_value = Integer.parseInt(request.getParameter("input_hour_value"));
     int minute_value = Integer.parseInt(request.getParameter("input_minute_value"));
@@ -15,6 +20,10 @@
     int month_value = Integer.parseInt(request.getParameter("month_value"));
     int day_value = Integer.parseInt(request.getParameter("day_value"));
     String content_value = request.getParameter("content_value");
+    if(key_value !=session_value){
+        response.sendRedirect("/week09/jsp/log_in.jsp");
+        return;
+    }
 
     if("PM".equals(apm_value)){
         if(hour_value !=12){

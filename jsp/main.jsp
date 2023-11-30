@@ -5,9 +5,13 @@
 <%@ page import="java.sql.ResultSet" %>
 <%@ page import="java.util.ArrayList" %>
 
+
 <%
-    //session.getAttribute는 Object 자료형이기에 String으로 형변환 해줌
-    Object id_value_ob = session.getAttribute("id_value");
+    Object id_value_ob = session.getAttribute("id_value"); 
+    if(id_value_ob == null){ // 세션이 없다면 (로그인 상태가 아니면 -> 로그인 페이지로 팅기게)
+        response.sendRedirect("/week09/jsp/log_in.jsp");
+        return;
+    }
     Object key_value_ob = session.getAttribute("key_value");
     Object phone_value_ob = session.getAttribute("phone_value");
     Object name_value_ob = session.getAttribute("name_value");
@@ -21,52 +25,63 @@
     String rank_value = String.valueOf(rank_value_ob);
     String department_value = String.valueOf(department_value_ob);
 
-    String member_name_input = "";
+    String member_name_input = ""; // 팀장의 권한으로 팀원 페이지를 볼 때 보여질 팀원의 이름
     String member_id_input = "";
 
     Class.forName("com.mysql.jdbc.Driver");
     Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
 
-    String sql = "SELECT * FROM user WHERE department=? AND id !=?";
+    String sql = "SELECT * FROM user WHERE department=? AND id !=?"; // 현재 사용자의 부서에 속한 팀원들의 목록
     PreparedStatement query = connect.prepareStatement(sql);
     query.setString(1, department_value);
     query.setString(2, id_value);
     ResultSet result = query.executeQuery();
 
-    ArrayList<ArrayList<String>> member_list = new ArrayList<ArrayList<String>>();
+    ArrayList<ArrayList<String>> member_list = new ArrayList<ArrayList<String>>(); // 팀원들의 id, name, key 담아줌
 
     while(result.next()){ 
         String member_id = result.getString("id");
         String member_name = result.getString("name");
         int member_key = result.getInt("user_key");
+        String member_department = result.getString("department");
 
         ArrayList<String> member_info = new ArrayList<String>();
         member_info.add("\""+member_id+"\"");
         member_info.add("\""+member_name+"\"");
         member_info.add("\""+member_key+"\"");
+        member_info.add("\""+member_department+"\"");
         member_list.add(member_info);
     }
 
-    if(request.getParameter("member_key") != null){
-        key_value = Integer.parseInt(request.getParameter("member_key"));
-        member_name_input = request.getParameter("member_name_input");
-        member_id_input = request.getParameter("member_id_input");
+    if(request.getParameter("member_key") != null && "팀장".equals(rank_value)){  // 팀장의 권한으로 팀원 페이지를 볼 때 
+        String member_department_input = request.getParameter("member_department_input");
+        if(department_value.equals(member_department_input)){
+            key_value = Integer.parseInt(request.getParameter("member_key")); // key_value를 팀원의 key로 바꿔줌 (session은 그대로)
+            member_name_input = request.getParameter("member_name_input");
+            member_id_input = request.getParameter("member_id_input");
+        }else{
+            response.sendRedirect("/week09/jsp/main.jsp");
+            return;
+        }
+    }else{
+        response.sendRedirect("/week09/jsp/main.jsp");
+        return;
     }
     String sql2 = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS formatted_date, COUNT(*) AS schedule_count FROM schedule WHERE user_key = ? GROUP BY formatted_date";
     PreparedStatement query2 = connect.prepareStatement(sql2);
     query2.setInt(1, key_value);
     ResultSet result2 = query2.executeQuery();
 
-    ArrayList<ArrayList<String>> schedule_list = new ArrayList<ArrayList<String>>();
+    ArrayList<ArrayList<String>> schedule_count_list = new ArrayList<ArrayList<String>>();
 
     while(result2.next()){
         String date = result2.getString("formatted_date");
         int schedule_count = result2.getInt("schedule_count");
-
-        ArrayList<String> schedule_info = new ArrayList<String>();
-        schedule_info.add("\""+date+"\"");
-        schedule_info.add(String.valueOf(schedule_count));
-        schedule_list.add(schedule_info);
+        
+        ArrayList<String> schedule_count_info = new ArrayList<String>();
+        schedule_count_info.add("\""+date+"\"");
+        schedule_count_info.add(String.valueOf(schedule_count));
+        schedule_count_list.add(schedule_count_info);
     }
 
     String sql3 = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS formatted_date, HOUR(date) AS hour, MINUTE(date) AS minute, content, schedule_key FROM schedule WHERE user_key =? ORDER BY date"; // 고치자 월 년 일 다 꺼내오자
@@ -74,7 +89,7 @@
     query3.setInt(1,key_value);
     ResultSet result3 = query3.executeQuery();
 
-    ArrayList<ArrayList<String>> schedule_detail_list = new ArrayList<ArrayList<String>>();
+    ArrayList<ArrayList<String>> schedule_list = new ArrayList<ArrayList<String>>();
 
     while(result3.next()){
         String formatted_date = result3.getString("formatted_date");
@@ -82,14 +97,14 @@
         String minute = result3.getString("minute");
         String content = result3.getString("content");
         int schedule_key = result3.getInt("schedule_key");
-        ArrayList<String> schedule_detail_info = new ArrayList<String>();
-        schedule_detail_info.add("\""+formatted_date+"\"");
-        schedule_detail_info.add("\""+hour+"\"");
-        schedule_detail_info.add("\""+minute+"\"");
-        schedule_detail_info.add("\""+content+"\"");
-        schedule_detail_info.add(String.valueOf(schedule_key));
+        ArrayList<String> schedule_info = new ArrayList<String>();
+        schedule_info.add("\""+formatted_date+"\"");
+        schedule_info.add("\""+hour+"\"");
+        schedule_info.add("\""+minute+"\"");
+        schedule_info.add("\""+content+"\"");
+        schedule_info.add(String.valueOf(schedule_key));
 
-        schedule_detail_list.add(schedule_detail_info);
+        schedule_list.add(schedule_info);
     }
 %>
 
@@ -136,6 +151,7 @@
                 </div>
                 <div class="details_div_container"> <!--일정 컨테이너--></div>
                 <form action="/week09/jsp/create_schedule_action.jsp" onsubmit="return check_event()" id="input_date_div"> <!--일정 추가 영역-->
+                    <input type="hidden" name="session_value" value="<%=key_value%>">
                     <input type="hidden" name="year_value" id=year_value>
                     <input type="hidden" name="month_value" id=month_value>
                     <input type="hidden" name="day_value" id=day_value>
@@ -237,13 +253,13 @@
         }
 
         function is_schedule(){ // 스케줄 있으면 원 & 숫자 나타나게
-            var schedule_list = <%=schedule_list%>
-            for(var i=0; i<schedule_list.length; i++){
-                var schedule_date = new Date(schedule_list[i][0])
+            var schedule_count_list = <%=schedule_count_list%>
+            for(var i=0; i<schedule_count_list.length; i++){
+                var schedule_date = new Date(schedule_count_list[i][0])
                 var schedule_day = schedule_date.getDate()
                 var schedule_month = schedule_date.getMonth()+1
                 var schedule_year = schedule_date.getFullYear()
-                var schedule_count = schedule_list[i][1]
+                var schedule_count = schedule_count_list[i][1]
                 var day_element = document.getElementById(schedule_year+"-"+schedule_month +"-"+schedule_day)
                 if (day_element) {
                     var existing_circle = day_element.getElementsByClassName("circle")
@@ -288,16 +304,16 @@
             }
 
             selected_date = year + "-" + month + "-" + day // 클릭된 버튼의 날짜 2023-07-02 이런 형식
-            var schedule_detail_list = <%=schedule_detail_list%>
+            var schedule_list = <%=schedule_list%>
 
-            for(var i=0; i<schedule_detail_list.length; i++){ // 전체 스케줄 개수만큼
-                var date = schedule_detail_list[i][0]// 저장된 스케줄의 날짜
+            for(var i=0; i<schedule_list.length; i++){ // 전체 스케줄 개수만큼
+                var date = schedule_list[i][0]// 저장된 스케줄의 날짜
          
                 if(date == selected_date){ // 클릭된 버튼의 날짜와 저장된 스케쥴의 날짜가 같다면
-                    var selected_hour = schedule_detail_list[i][1] // 저장된 스케줄의 시
-                    var selected_minute = schedule_detail_list[i][2] // 저장된 스케줄의 분
-                    var selected_key = schedule_detail_list[i][4] // 저장된 스케줄의 키
-            
+                    var selected_hour = schedule_list[i][1] // 저장된 스케줄의 시
+                    var selected_minute = schedule_list[i][2] // 저장된 스케줄의 분
+                    var selected_key = schedule_list[i][4] // 저장된 스케줄의 키
+
                     if(selected_minute < 10){ // 02가 아니라 2 이런식으로 저장되기 때문에
                         selected_minute = '0'+ parseInt(selected_minute) 
                     }
@@ -313,7 +329,7 @@
                         selected_hour = 12
                     }
 
-                    var selected_content = schedule_detail_list[i][3] // 저장된 스케쥴의 내용
+                    var selected_content = schedule_list[i][3] // 저장된 스케쥴의 내용
                     
 
                     var details_div = document.createElement("div") // 각 일정 전체를 담는 div (핑크 테두리)
@@ -409,71 +425,100 @@
                     var delete_details = document.createElement("button")
                     delete_details.className="delete_details"
                     delete_details.innerHTML="삭제"
-                    delete_details.onclick=function(){
-                        var key_input = document.createElement("input")
-                        key_input.type="hidden"
-                        key_input.name="key_input"
-                        key_input.value=selected_key
+                    delete_details.onclick=(function(key){
+                        return function(event){
+                            var key_input = document.createElement("input")
+                            key_input.type="hidden"
+                            key_input.name="key_input"
+                            key_input.value=key
 
-                        var form = document.createElement("form")
-                        form.action="/week09/jsp/delete_schedule.jsp"
+                            var session_input = document.createElement("input")
+                            session_input.type="hidden"
+                            session_input.name="session_input"
+                            session_input.value = <%=key_value%>
+
+                            var form = document.createElement("form")
+                            form.action="/week09/jsp/delete_schedule.jsp"
+
+                            form.appendChild(key_input)
+                            form.appendChild(session_input)
+
+                            document.body.appendChild(form)
+
+                            form.submit();
+                        }
                         
-                        form.appendChild(key_input)
-
-                        document.body.appendChild(form)
-
-                        form.submit();
-                    }
+                    })(selected_key)
 
                     var modify_details_submit = document.createElement("button") // 수정 하고 제출
                     modify_details_submit.className="modify_details_submit"
                     modify_details_submit.innerHTML="완료"
-                    modify_details_submit.onclick=function(){
-                        var details_div = this.closest(".details_div")
-                        var modify_hour = details_div.getElementsByClassName("hour")[0].innerHTML
-                        var modify_apm = details_div.getElementsByClassName("apm")[0].innerHTML
-                        var modify_minute = details_div.getElementsByClassName("minute")[0].innerHTML
-                        var modify_details_content = details_div.getElementsByClassName("modify_details_content")[0]
+                    modify_details_submit.onclick=(function(key){ // selected_key를 매개변수로 받아 즉시 실행됨 ( 클로저를 생성하여 selected_key 값을 그 스코프에서 캡처 )
+                                                                  // 변수 캡처 : 외부 함수의 변수를 내부 함수에서 사용하는 것, 
+                                                                  // 클로저 : 다른 함수의 스코프에 있는 변수에 접근할 수 있는 함수, 자신이 생성될 때의 환경을 기억함, 상위 스코프의 변수를 참조할 수 있다.
+                                                                  // 스코프 : 변수의 유효범위 
+                                                                  // 이걸 사용 안 할 시 -> schedule_key값이 순차적으로 받아지는 게 아니라 마지막 값만 받아지는 문제 발생
+                        return function(event){ // 반환된 함수는 onclick 이벤트 함수로 사용됨 (event:매개변수)
+                            var details_div = event.target.closest(".details_div")
+                            var modify_hour = details_div.getElementsByClassName("hour")[0].innerHTML
+                            var modify_apm = details_div.getElementsByClassName("apm")[0].innerHTML
+                            var modify_minute = details_div.getElementsByClassName("minute")[0].innerHTML
+                            var modify_details_content = details_div.getElementsByClassName("modify_details_content")[0].value
+                            
 
-                        var key_input = document.createElement("input")
-                        key_input.type="hidden"
-                        key_input.name="key_input"
-                        key_input.value=selected_key
-                        
-                        var date_input = document.createElement("input")
-                        date_input.type="hidden"
-                        date_input.name="date_input"
-                        date_input.value=selected_date
+                            var content_input = document.createElement("input")
+                            content_input.type="hidden"
+                            content_input.name="content_input"
+                            content_input.value=modify_details_content
 
-                        var hour_input = document.createElement("input")
-                        hour_input.type="hidden"
-                        hour_input.name = "hour_input"
-                        hour_input.value= modify_hour
+                            var key_input = document.createElement("input")
+                            key_input.type="hidden"
+                            key_input.name="key_input"
+                            key_input.value=key
 
-                        var apm_input = document.createElement("input")
-                        apm_input.type="hidden"
-                        apm_input.name = "apm_input"
-                        apm_input.value= modify_apm
 
-                        var minute_input = document.createElement("input")
-                        minute_input.type="hidden"
-                        minute_input.name = "minute_input"
-                        minute_input.value= modify_minute
+                            var date_input = document.createElement("input")
+                            date_input.type="hidden"
+                            date_input.name="date_input"
+                            date_input.value=selected_date
 
-                        var form = document.createElement("form")
-                        form.action="/week09/jsp/modify_schedule.jsp"
+                            var hour_input = document.createElement("input")
+                            hour_input.type="hidden"
+                            hour_input.name = "hour_input"
+                            hour_input.value= modify_hour
 
-                        form.appendChild(hour_input)
-                        form.appendChild(apm_input)
-                        form.appendChild(minute_input)
-                        form.appendChild(modify_details_content)
-                        form.appendChild(key_input)
-                        form.appendChild(date_input)
 
-                        document.body.appendChild(form)
+                            var apm_input = document.createElement("input")
+                            apm_input.type="hidden"
+                            apm_input.name = "apm_input"
+                            apm_input.value= modify_apm
 
-                        form.submit();
-                    }
+                            var minute_input = document.createElement("input")
+                            minute_input.type="hidden"
+                            minute_input.name = "minute_input"
+                            minute_input.value= modify_minute
+
+                            var session_input = document.createElement("input")
+                            session_input.type="hidden"
+                            session_input.name="session_input"
+                            session_input.value = <%=key_value%>
+
+                            var form = document.createElement("form")
+                            form.action="/week09/jsp/modify_schedule.jsp"
+
+                            form.appendChild(hour_input)
+                            form.appendChild(apm_input)
+                            form.appendChild(minute_input)
+                            form.appendChild(content_input)
+                            form.appendChild(key_input)
+                            form.appendChild(session_input)
+                            form.appendChild(date_input)
+
+                            document.body.appendChild(form)
+
+                            form.submit();
+                        };
+                    })(selected_key)
 
                     var modify_details_cancel = document.createElement("button")
                     modify_details_cancel.className="modify_details_cancel"
@@ -628,10 +673,16 @@
                 member_key.type="hidden"
                 member_key.className="member_key"
                 member_key.value = member_list[i][2]
+
+                var member_department = document.createElement("input")
+                member_department.type="hidden"
+                member_department.className="member_department"
+                member_department.value = member_list[i][3]
+
                 button.appendChild(member_name)
                 button.appendChild(member_id)
-
                 button.appendChild(member_key)
+                button.appendChild(member_department)
 
                 document.getElementById("member_list").appendChild(button)
             }
@@ -844,6 +895,12 @@
             member_id_input.name = "member_id_input"
             member_id_input.value = member_id
             form.appendChild(member_id_input)
+
+            var member_department_input = document.createElement("input")
+            member_department_input.type = "hidden"
+            member_department_input.name = "member_department_input"
+            member_department_input.value = member_department
+            form.appendChild(member_department_input)
 
             var member_name_input = document.createElement("input")
             member_name_input.type = "hidden"
