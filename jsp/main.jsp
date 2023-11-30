@@ -5,6 +5,7 @@
 <%@ page import="java.sql.ResultSet" %>
 <%@ page import="java.util.ArrayList" %>
 
+// 일정 수정 jsp를 다른 사용자가 접근하는 것도 막아야 하나요??
 <%
     Object id_value_ob = session.getAttribute("id_value"); 
     if(id_value_ob == null){ // 세션이 없다면 (로그인 상태가 아니면 -> 로그인 페이지로 팅기게)
@@ -255,38 +256,30 @@
             }
         }
 
-        function have_shedule(){ // 스케줄 있으면 원 & 숫자 나타나게
-            var schedule_count_list = <%=schedule_count_list%>
-            for(var i=0; i<schedule_count_list.length; i++){
-                var schedule_date = new Date(schedule_count_list[i][0]) // 저장된 날짜 가져옴
-                var schedule_day = schedule_count_list[i][4]
-                var schedule_month = schedule_count_list[i][3]
-                var schedule_year = schedule_count_list[i][2]
-                var schedule_count = schedule_count_list[i][1] // 저장된 일정 갯수 가져옴
-                var day_element = document.getElementById(schedule_year+"-"+schedule_month +"-"+schedule_day) // 저장된 날짜의 id를 가진 div를 가져옴
-                if (day_element) { // 있다면 즉 -> 일정이 여러개라면
-                    var existing_circle = day_element.getElementsByClassName("circle")
-                    if (existing_circle.length > 0) { // 이미 존재하는 일정이 1개 이상이면
-                        if(schedule_count >= 10){ // 일정의 수가 10개 이상이면
-                            existing_circle[0].innerHTML = "9+" // 9+로 표시
-                        }
-                        else{
-                            existing_circle[0].innerHTML = schedule_count 
-                        }
-                    } else { // 없다면
-                        var circle_div = document.createElement("div"); // circle 만들어줌
-                        circle_div.className = "circle";
-                        if (schedule_count >= 10) { 
-                            circle_div.innerHTML = '9+';
-                        } else {
-                            circle_div.innerHTML = schedule_count;
-                        }
-                        day_element.appendChild(circle_div);
-                    }
-                }  
+        function check_event() {
+            var input_date = document.getElementById("input_date").value
+            var input_hour_value = document.getElementsByClassName("input_hour_value")[0]
+            var input_minute_value = document.getElementsByClassName("input_minute_value")[0]
+            var input_apm_value = document.getElementsByClassName("input_apm_value")[0]
+
+            if (input_date.trim() === "") {
+                document.getElementById("alert_content").style.display = "block"
+                return false
+            }
+            else {
+                document.getElementById("alert_content").style.display = "none"
+                if (input_hour_value.value === ""){
+                    input_hour_value.value = "1";
+                }
+                if(input_minute_value.value === ""){
+                    input_minute_value.value = "00";
+                }
+                if(input_apm_value.value === "") {
+                    input_apm_value.value = "AM";
+                }
             }
         }
- 
+
         function td_click_event(id){ // 버튼 클릭 시 날짜에 따라 스케줄 보여줌
             if('<%=key_value%>'!= '<%=session.getAttribute("key_value")%>'){
                 document.getElementById("input_date_div").style.display='none'
@@ -341,7 +334,372 @@
                 open_modal(year,month,day)
             }
         }
-                    
+
+        function delete_details_event(key){
+            if(confirm("정말로 삭제하시겠습니까?")){
+                var key_input = document.createElement("input")
+                key_input.type="hidden"
+                key_input.name="key_input"
+                key_input.value=key
+
+                var session_input = document.createElement("input")
+                session_input.type="hidden"
+                session_input.name="session_input"
+                session_input.value = <%=key_value%>
+
+                var form = document.createElement("form")
+                form.action="/week09/jsp/delete_schedule.jsp"
+
+                form.appendChild(key_input)
+                form.appendChild(session_input)
+                document.body.appendChild(form)
+                form.submit();
+            }
+        }
+
+        function modify_details_submit_event(key,selected_date){
+            var details_div = event.target.closest(".details_div")
+            var modify_hour = details_div.getElementsByClassName("hour")[0].innerHTML
+            var modify_apm = details_div.getElementsByClassName("apm")[0].innerHTML
+            var modify_minute = details_div.getElementsByClassName("minute")[0].innerHTML
+            var modify_details_content = details_div.getElementsByClassName("modify_details_content")[0].value
+
+            var content_input = document.createElement("input")
+            content_input.type="hidden"
+            content_input.name="content_input"
+            content_input.value=modify_details_content
+
+            var key_input = document.createElement("input")
+            key_input.type="hidden"
+            key_input.name="key_input"
+            key_input.value=key
+
+            var date_input = document.createElement("input")
+            date_input.type="hidden"
+            date_input.name="date_input"
+            date_input.value=selected_date
+
+            var hour_input = document.createElement("input")
+            hour_input.type="hidden"
+            hour_input.name = "hour_input"
+            hour_input.value= modify_hour
+
+            var apm_input = document.createElement("input")
+            apm_input.type="hidden"
+            apm_input.name = "apm_input"
+            apm_input.value= modify_apm
+
+            var minute_input = document.createElement("input")
+            minute_input.type="hidden"
+            minute_input.name = "minute_input"
+            minute_input.value= modify_minute
+
+            var session_input = document.createElement("input")
+            session_input.type="hidden"
+            session_input.name="session_input"
+            session_input.value = <%=key_value%>
+
+            var form = document.createElement("form")
+            form.action="/week09/jsp/modify_schedule.jsp"
+
+            form.appendChild(hour_input)
+            form.appendChild(apm_input)
+            form.appendChild(minute_input)
+            form.appendChild(content_input)
+            form.appendChild(key_input)
+            form.appendChild(session_input)
+            form.appendChild(date_input)
+            document.body.appendChild(form)
+            form.submit();
+        }
+        unction modify_details_event(selected) { // 수정 버튼 누를 시
+            var details_div = selected.closest('.details_div')
+            var details_time = details_div.getElementsByClassName("details_time")[0]
+            var details_content = details_div.getElementsByClassName("details_content")[0]
+            var modify_details_time = details_div.getElementsByClassName("modify_details_time")[0]
+            var modify_details_content = details_div.getElementsByClassName("modify_details_content")[0]
+            var modify_details = details_div.getElementsByClassName("modify_details")[0]
+            var delete_details = details_div.getElementsByClassName("delete_details")[0]
+            var modify_details_submit_btn = details_div.getElementsByClassName("modify_details_submit_btn")[0]
+            var modify_details_cancel_btn = details_div.getElementsByClassName("modify_details_cancel_btn")[0]
+    
+            details_time.style.display='none'
+            details_content.style.display='none'
+            modify_details.style.display='none'
+            delete_details.style.display='none'
+            
+            modify_details_time.style.display='flex'
+            modify_details_content.style.display='flex'
+            modify_details_submit_btn.style.display='inline-block'
+            modify_details_cancel_btn.style.display='inline-block'
+        }
+    
+        function modify_details_cancel_event(selected){ // 수정 취소 버튼 누를시
+            var details_div = selected.closest('.details_div')
+            var details_time = details_div.getElementsByClassName("details_time")[0]
+            var details_content = details_div.getElementsByClassName("details_content")[0]
+            var modify_details_time = details_div.getElementsByClassName("modify_details_time")[0]
+            var modify_details_content = details_div.getElementsByClassName("modify_details_content")[0]
+            var modify_details = details_div.getElementsByClassName("modify_details")[0]
+            var delete_details = details_div.getElementsByClassName("delete_details")[0]
+            var modify_details_submit_btn = details_div.getElementsByClassName("modify_details_submit_btn")[0]
+            var modify_details_cancel_btn = details_div.getElementsByClassName("modify_details_cancel_btn")[0]
+    
+            details_time.style.display='flex'
+            details_content.style.display='flex'
+            modify_details.style.display='inline-block'
+            delete_details.style.display='inline-block'
+    
+            modify_details_time.style.display='none'
+            modify_details_content.style.display='none'
+            modify_details_submit_btn.style.display='none'
+            modify_details_cancel_btn.style.display='none'
+        }
+
+        function close_modal_event() { // 초기화 해주는 느낌
+            document.getElementById("input_date").value = ""
+            document.getElementById("alert_content").style.display = "none" // 경고문 사라지게
+
+            var hour = document.getElementById("input_hour")
+            var minute = document.getElementById("input_minute")
+            var apm = document.getElementById("input_apm")
+            var modify_details_content = document.getElementsByClassName("modify_details_content")
+            var details_div_container = document.getElementsByClassName("details_div_container")[0]
+            
+            hour.innerHTML = "1"
+            minute.innerHTML = "00"
+            apm.innerHTML = "AM"
+
+            hour.value = "1";
+            minute,value = "00";
+            apm.value = "AM";
+
+            for (var i = 0; i < modify_details_content.length; i++) {
+                modify_details_content[i].value = ""
+                modify_details_cancel_event(document.getElementsByClassName("details_div")[i])
+            }
+            while (details_div_container.firstChild) { // 기존 일정 지워줌
+                details_div_container.removeChild(details_div_container.firstChild);
+            }
+            document.getElementById("modal_overlay").style.display = "none"
+            document.getElementById("modal").style.display = "none"
+        }
+
+        function show_menu_event() { // 숨겨진 메뉴 보여줌
+            document.getElementById("name").innerHTML='<%=name_value%>'
+            document.getElementById("id").innerHTML='<%=id_value%>'
+            document.getElementById("phone").innerHTML='<%=phone_value%>'
+            document.getElementById("rank").innerHTML='<%=rank_value%>'
+            document.getElementById("department").innerHTML='<%=department_value%>'
+            var hidden_menu = document.getElementById("hidden_menu")
+            var dark_background = document.getElementById("dark_background")
+    
+            if (dark_background.style.display != 'block') {
+                hidden_menu.style.right = '0'
+                dark_background.style.display = 'block'
+            }
+            else {
+                hidden_menu.style.right = '-260px'
+                dark_background.style.display = 'none'
+            }
+        }
+        function select_month_event(selected) { // selected는 버튼
+            var selected_month = selected.value // 선택된 월
+            var button = document.getElementsByClassName("month") // 월 버튼들 가져옴
+            for (var i = 0; i < 12; i++) {
+                button[i].style.backgroundColor = 'white' // 우선 모든 버튼을 하얀색으로 설정함
+            }
+            selected.style.backgroundColor = '#E16A9D'
+            delete_calender() // 원래 있던 달력 지우기
+            make_calender(selected_month) // 선택된 월에 맞는 달력 그리기
+        }
+    
+        function prev_year_event() { // 이전 년도
+            var year = document.getElementById("year").innerHTML
+            year = parseInt(year) - 1
+            document.getElementById("year").innerHTML = year
+            var month = document.getElementsByClassName("month")
+            for(var i=0; i<month.length; i++){ 
+                month[i].style.backgroundColor ="white"
+            }
+            delete_calender()
+        }
+    
+        function next_year_event() { // 다음 년도
+            var year = document.getElementById("year").innerHTML
+            year = parseInt(year) +1
+            document.getElementById("year").innerHTML = year
+            var month = document.getElementsByClassName("month")
+            for(var i=0; i<month.length; i++){ 
+                month[i].style.backgroundColor ="white"
+            }
+            delete_calender()
+        }
+    
+        function hour_plus_event(selected, is_modify) {
+            if(is_modify){ // 수정 영역이면
+                var hour_div = selected.closest('.modify_details_time') // 상위에 가까운 modify_details_time 찾아 가져옴
+            }
+            else{
+                var hour_div = selected.closest('#input_date_div')
+            }
+            var hour_element = hour_div.getElementsByClassName("hour")[0].innerHTML
+            var hour = parseInt(hour_element, 10)
+            hour += 1
+            if (hour == 13) {
+                hour = 1
+            }
+            hour_div.getElementsByClassName("hour")[0].innerHTML = hour
+            hour_div.getElementsByClassName("input_hour_value")[0].value= hour
+        }
+    
+        function hour_minus_event(selected,is_modify) {
+            if(is_modify){
+                var hour_div = selected.closest('.modify_details_time')
+            }
+            else{
+                var hour_div = selected.closest('#input_date_div')
+            }
+            var hour_element = hour_div.getElementsByClassName("hour")[0].innerHTML
+            var hour = parseInt(hour_element, 10)
+            hour -= 1
+            if (hour == 0) {
+                hour = 12
+            }
+            hour_div.getElementsByClassName("hour")[0].innerHTML = hour
+            hour_div.getElementsByClassName("input_hour_value")[0].value= hour
+        }
+    
+        function minute_plus_event(selected,is_modify) {
+            if(is_modify){
+                var minute_div = selected.closest('.modify_details_time')
+            }
+            else{
+                var minute_div = selected.closest('#input_date_div')
+            }
+            var minute_element = minute_div.getElementsByClassName("minute")[0].innerHTML
+            var minute = parseInt(minute_element, 10) + 1
+            if (minute == 60) {
+                minute = 0
+            }
+            minute = (minute < 10 ? '0' : '') + minute // 10 이하일 때 2 -> 02
+            minute_div.getElementsByClassName("minute")[0].innerHTML = minute
+            minute_div.getElementsByClassName("input_minute_value")[0].value= minute
+        }
+    
+        function minute_minus_event(selected,is_modify) {
+            if(is_modify){
+                var minute_div = selected.closest('.modify_details_time')
+            }
+            else{
+                var minute_div = selected.closest('#input_date_div')
+            }
+            var minute_element = minute_div.getElementsByClassName("minute")[0].innerHTML
+            var minute = parseInt(minute_element, 10)
+            if (minute == 0) {
+                minute = 59
+            }
+            else {
+                minute -= 1
+                minute = (minute < 10 ? '0' : '') + minute
+                minute_div.getElementsByClassName("minute")[0].innerHTML = minute
+                minute_div.getElementsByClassName("input_minute_value")[0].value= minute
+            }
+        }
+    
+        function apm_change_event(selected) {
+            var input_date_div = selected.closest("#input_date_div")
+            if (selected.innerHTML == "AM") {
+                selected.innerHTML = "PM"
+                input_date_div.getElementsByClassName("input_apm_value")[0].value="PM"
+            }
+            else{
+                selected.innerHTML = "AM"
+                input_date_div.getElementsByClassName("input_apm_value")[0].value="AM"
+            }
+        }
+
+        function select_member_event(selected){ // 팀원 선택 시
+            var member_name = selected.getElementsByClassName('member_name')[0].innerHTML
+            var member_id = selected.getElementsByClassName('member_id')[0].innerHTML
+            var member_key = selected.getElementsByClassName("member_key")[0].value
+            var member_department = selected.getElementsByClassName("member_department")[0].value
+
+            var member_info = document.getElementById("member_info")
+            var member_name_div=document.getElementById("member_name_div")
+            var member_id_div=document.getElementById("member_id_div")
+            var hidden_menu = document.getElementById("hidden_menu")
+            var dark_background = document.getElementById("dark_background")
+    
+            member_info.style.display='flex'
+            member_name_div.innerHTML= member_name
+            member_id_div.innerHTML= member_id
+            hidden_menu.style.right = '-260px'
+            dark_background.style.display = 'none'
+            
+            var member_key_input = document.createElement("input")
+            member_key_input.type = "hidden"
+            member_key_input.name = "member_key"
+            member_key_input.value = member_key
+
+            var member_id_input = document.createElement("input")
+            member_id_input.type = "hidden"
+            member_id_input.name = "member_id_input"
+            member_id_input.value = member_id
+
+            var member_department_input = document.createElement("input")
+            member_department_input.type = "hidden"
+            member_department_input.name = "member_department_input"
+            member_department_input.value = member_department
+       
+            var member_name_input = document.createElement("input")
+            member_name_input.type = "hidden"
+            member_name_input.name = "member_name_input"
+            member_name_input.value = member_name
+
+            var form = document.createElement("form")
+            form.action="/week09/jsp/main.jsp"
+
+            form.appendChild(member_key_input)
+            form.appendChild(member_id_input)
+            form.appendChild(member_department_input)
+            form.appendChild(member_name_input)
+            document.body.appendChild(form)
+            form.submit()
+        }
+
+        function have_shedule(){ // 스케줄 있으면 원 & 숫자 나타나게
+            var schedule_count_list = <%=schedule_count_list%>
+            for(var i=0; i<schedule_count_list.length; i++){
+                var schedule_date = new Date(schedule_count_list[i][0]) // 저장된 날짜 가져옴
+                var schedule_day = schedule_count_list[i][4]
+                var schedule_month = schedule_count_list[i][3]
+                var schedule_year = schedule_count_list[i][2]
+                var schedule_count = schedule_count_list[i][1] // 저장된 일정 갯수 가져옴
+                var day_element = document.getElementById(schedule_year+"-"+schedule_month +"-"+schedule_day) // 저장된 날짜의 id를 가진 div를 가져옴
+                if (day_element) { // 있다면 즉 -> 일정이 여러개라면
+                    var existing_circle = day_element.getElementsByClassName("circle")
+                    if (existing_circle.length > 0) { // 이미 존재하는 일정이 1개 이상이면
+                        if(schedule_count >= 10){ // 일정의 수가 10개 이상이면
+                            existing_circle[0].innerHTML = "9+" // 9+로 표시
+                        }
+                        else{
+                            existing_circle[0].innerHTML = schedule_count 
+                        }
+                    } else { // 없다면
+                        var circle_div = document.createElement("div"); // circle 만들어줌
+                        circle_div.className = "circle";
+                        if (schedule_count >= 10) { 
+                            circle_div.innerHTML = '9+';
+                        } else {
+                            circle_div.innerHTML = schedule_count;
+                        }
+                        day_element.appendChild(circle_div);
+                    }
+                }  
+            }
+        }
+             
         function create_details_div(selected_hour, selected_minute, selected_content, selected_apm, selected_key, selected_date){
             var details_div = document.createElement("div") // 각 일정 전체를 담는 div (핑크 테두리)
             details_div.className="details_div"
@@ -420,7 +778,6 @@
             modify_details_content.value = selected_content
             modify_details_content.placeholder=selected_content
 
-
             var button_div = document.createElement("div") // 수정 삭제 버튼 div
             button_div.className="button_div"
             
@@ -443,14 +800,14 @@
             modify_details_submit_btn.className="modify_details_submit_btn"
             modify_details_submit_btn.innerHTML="완료"
             modify_details_submit_btn.onclick = function(){
-                modify_details_submit(selected_key,selected_date)
+                modify_details_submit_event(selected_key,selected_date)
             }
 
             var modify_details_cancel_btn = document.createElement("button")
             modify_details_cancel_btn.className="modify_details_cancel_btn"
             modify_details_cancel_btn.innerHTML="취소"
             modify_details_cancel_btn.onclick=function(){
-                modify_details_cancel_btn(this)
+                modify_details_cancel_event(this)
             }
 
             button_div.appendChild(modify_details)
@@ -481,86 +838,6 @@
             return details_div
         }
 
-        function delete_details_event(key){
-            if(confirm("정말로 삭제하시겠습니까?")){
-                var key_input = document.createElement("input")
-                key_input.type="hidden"
-                key_input.name="key_input"
-                key_input.value=key
-
-                var session_input = document.createElement("input")
-                session_input.type="hidden"
-                session_input.name="session_input"
-                session_input.value = <%=key_value%>
-
-                var form = document.createElement("form")
-                form.action="/week09/jsp/delete_schedule.jsp"
-
-                form.appendChild(key_input)
-                form.appendChild(session_input)
-                document.body.appendChild(form)
-                form.submit();
-            }
-        }
-
-        function modify_details_submit(key,selected_date){
-            var details_div = event.target.closest(".details_div")
-            var modify_hour = details_div.getElementsByClassName("hour")[0].innerHTML
-            var modify_apm = details_div.getElementsByClassName("apm")[0].innerHTML
-            var modify_minute = details_div.getElementsByClassName("minute")[0].innerHTML
-            var modify_details_content = details_div.getElementsByClassName("modify_details_content")[0].value
-
-            var content_input = document.createElement("input")
-            content_input.type="hidden"
-            content_input.name="content_input"
-            content_input.value=modify_details_content
-
-            var key_input = document.createElement("input")
-            key_input.type="hidden"
-            key_input.name="key_input"
-            key_input.value=key
-
-
-            var date_input = document.createElement("input")
-            date_input.type="hidden"
-            date_input.name="date_input"
-            date_input.value=selected_date
-
-            var hour_input = document.createElement("input")
-            hour_input.type="hidden"
-            hour_input.name = "hour_input"
-            hour_input.value= modify_hour
-
-
-            var apm_input = document.createElement("input")
-            apm_input.type="hidden"
-            apm_input.name = "apm_input"
-            apm_input.value= modify_apm
-
-            var minute_input = document.createElement("input")
-            minute_input.type="hidden"
-            minute_input.name = "minute_input"
-            minute_input.value= modify_minute
-
-            var session_input = document.createElement("input")
-            session_input.type="hidden"
-            session_input.name="session_input"
-            session_input.value = <%=key_value%>
-
-            var form = document.createElement("form")
-            form.action="/week09/jsp/modify_schedule.jsp"
-
-            form.appendChild(hour_input)
-            form.appendChild(apm_input)
-            form.appendChild(minute_input)
-            form.appendChild(content_input)
-            form.appendChild(key_input)
-            form.appendChild(session_input)
-            form.appendChild(date_input)
-            document.body.appendChild(form)
-            form.submit();
-        }
-
         function open_modal(year, month, day) {
             if(day < 10){
                 day = day - '0' // ex) 02를 2로 표현하기 위해
@@ -578,46 +855,14 @@
             document.getElementById("day_value").value = day
         }
     
-          
-        function close_modal_event() {
-            document.getElementById("input_date").value = ""
-            document.getElementById("alert_content").style.display = "none"
-
-            var hour = document.getElementById("input_hour")
-            var minute = document.getElementById("input_minute")
-            var apm = document.getElementById("input_apm")
-            
-            hour.innerHTML = "1"
-            minute.innerHTML = "00"
-            apm.innerHTML = "AM"
-
-            hour.value = "1";
-            minute,value = "00";
-            apm,value = "AM";
-
-            var modify_details_content = document.getElementsByClassName("modify_details_content")
-
-            for (var i = 0; i < modify_details_content.length; i++) {
-                modify_details_content[i].value = ""
-                modify_details_cancel_event(document.getElementsByClassName("details_div")[i])
-            }
-
-            var details_div_container = document.getElementsByClassName("details_div_container")[0];
-            while (details_div_container.firstChild) {
-                details_div_container.removeChild(details_div_container.firstChild);
-            }
-            document.getElementById("modal_overlay").style.display = "none"
-            document.getElementById("modal").style.display = "none"
-        }
-
-        function make_me(){
+        function make_me(){ // (나) 버튼
             var id = '<%=id_value%>'
             var name = '<%=name_value%>'
             var button = document.createElement("button")
             button.type="button"
             button.className="member"
             button.onclick=function(){
-                select_me_event()
+                location.href="/week09/jsp/main.jsp"
             }
             var name_div = document.createElement("div")
             name_div.className="member_name"
@@ -629,12 +874,11 @@
 
             button.appendChild(name_div)
             button.appendChild(id_div)
-
             document.getElementById("member_list").appendChild(button)
         }
 
-        function make_member_list(){
-            var member_list = <%=member_list%>
+        function make_member_list(){ // 팀원 목록 만들어줌
+            var member_list = <%=member_list%> 
 
             for(var i=0; i<member_list.length; i++){
                 var button = document.createElement("button")
@@ -643,17 +887,14 @@
                 button.onclick=function(){
                     select_member_event(this)
                 }
-                var member_name = document.createElement("div")
-                member_name.className="member_name"
-                member_name.innerHTML=member_list[i][1]
-
-                console.log(member_name.innerHTML)
-
                 var member_id = document.createElement("div")
                 member_id.className="member_id"
                 member_id.innerHTML=member_list[i][0]
 
-                
+                var member_name = document.createElement("div")
+                member_name.className="member_name"
+                member_name.innerHTML=member_list[i][1]
+
                 var member_key = document.createElement("input")
                 member_key.type="hidden"
                 member_key.className="member_key"
@@ -664,8 +905,6 @@
                 member_department.className="member_department"
                 member_department.value = member_list[i][3]
 
-                console.log(member_department.value)
-
                 button.appendChild(member_name)
                 button.appendChild(member_id)
                 button.appendChild(member_key)
@@ -674,280 +913,13 @@
                 document.getElementById("member_list").appendChild(button)
             }
         }
-
-
-        function show_menu_event() {
-            var hidden_menu = document.getElementById("hidden_menu")
-            var dark_background = document.getElementById("dark_background")
-    
-            if (dark_background.style.display != 'block') {
-                hidden_menu.style.right = '0'
-                dark_background.style.display = 'block'
-            }
-            else {
-                hidden_menu.style.right = '-260px'
-                dark_background.style.display = 'none'
-            }
-        }
-        function select_month_event(selected) {
-            console.log(selected) // selected는 버튼
-            var selected_month = selected.value // 선택된 월
-            var button = document.getElementsByClassName("month") // 월 버튼들 가져옴
-            for (var i = 0; i < 12; i++) {
-                button[i].style.backgroundColor = 'white' // 우선 모든 버튼을 하얀색으로 설정함
-            }
-            selected.style.backgroundColor = '#E16A9D'
-            delete_calender() // 원래 있던 달력 지우기
-            make_calender(selected_month) // 선택된 월에 맞는 달력 그리기
-        }
-    
-        function prev_year_event() {
-            var year = document.getElementById("year").innerHTML
-            year = parseInt(year) - 1
-            document.getElementById("year").innerHTML = year
-            delete_calender()
-            var month = document.getElementsByClassName("month")
-            for(var i=0; i<month.length; i++){ 
-                month[i].style.backgroundColor ="white"
-            }
-        }
-    
-        function next_year_event() {
-            var year = document.getElementById("year").innerHTML
-            year = parseInt(year) +1
-            document.getElementById("year").innerHTML = year
-            delete_calender()
-            var month = document.getElementsByClassName("month")
-            for(var i=0; i<month.length; i++){ 
-                month[i].style.backgroundColor ="white"
-            }
-        }
-    
-     
-    
-        function hour_plus_event(selected,ismodify) {
-            if(ismodify){
-                var hour_div = selected.closest('.modify_details_time')
-            }
-            else{
-                var hour_div = selected.closest('#input_date_div')
-            }
-
-            var hour_element = hour_div.getElementsByClassName("hour")[0].innerHTML
-            var hour = parseInt(hour_element, 10)
-
-            hour += 1
-            if (hour == 13) {
-                hour = 1
-            }
-            hour_div.getElementsByClassName("hour")[0].innerHTML = hour
-            console.log(hour_div)
-            hour_div.getElementsByClassName("input_hour_value")[0].value= hour
-        }
-    
-        function hour_minus_event(selected,ismodify) {
-            if(ismodify){
-                var hour_div = selected.closest('.modify_details_time')
-            }
-            else{
-                var hour_div = selected.closest('#input_date_div')
-            }
-            var hour_element = hour_div.getElementsByClassName("hour")[0].innerHTML
-            var hour = parseInt(hour_element, 10)
-            hour -= 1
-            if (hour == 0) {
-                hour = 12
-            }
-            hour_div.getElementsByClassName("hour")[0].innerHTML = hour
-            hour_div.getElementsByClassName("input_hour_value")[0].value= hour
-        }
-    
-        function minute_plus_event(selected,ismodify) {
-
-            if(ismodify){
-                var minute_div = selected.closest('.modify_details_time')
-            }
-            else{
-                var minute_div = selected.closest('#input_date_div')
-            }
-
-            var minute_element = minute_div.getElementsByClassName("minute")[0].innerHTML
-            var minute = parseInt(minute_element, 10) + 1
-            if (minute == 60) {
-                minute = 0
-            }
-            minute = (minute < 10 ? '0' : '') + minute
-            minute_div.getElementsByClassName("minute")[0].innerHTML = minute
-            minute_div.getElementsByClassName("input_minute_value")[0].value= minute
-        }
-    
-        function minute_minus_event(selected,ismodify) {
-            if(ismodify){
-                var minute_div = selected.closest('.modify_details_time')
-            }
-            else{
-                var minute_div = selected.closest('#input_date_div')
-            }
-            var minute_element = minute_div.getElementsByClassName("minute")[0].innerHTML
-            var minute = parseInt(minute_element, 10)
-            if (minute == 0) {
-                minute = 59
-            }
-            else {
-                minute -= 1
-            }
-            minute = (minute < 10 ? '0' : '') + minute
-            minute_div.getElementsByClassName("minute")[0].innerHTML = minute
-            minute_div.getElementsByClassName("input_minute_value")[0].value= minute
-        }
-    
-        function apm_change_event(selected) {
-
-            var input_date_div = selected.closest("#input_date_div")
-            if (selected.innerHTML == "AM") {
-                selected.innerHTML = "PM"
-                input_date_div.getElementsByClassName("input_apm_value")[0].value="PM"
-            }
-            else{
-                selected.innerHTML = "AM"
-                input_date_div.getElementsByClassName("input_apm_value")[0].value="AM"
-            }
-        }
-    
-        function modify_details_event(selected) {
-            var details_div = selected.closest('.details_div')
-            var details_time = details_div.getElementsByClassName("details_time")[0]
-            var details_content = details_div.getElementsByClassName("details_content")[0]
-            var modify_details_time = details_div.getElementsByClassName("modify_details_time")[0]
-            var modify_details_content = details_div.getElementsByClassName("modify_details_content")[0]
-            var modify_details = details_div.getElementsByClassName("modify_details")[0]
-            var delete_details = details_div.getElementsByClassName("delete_details")[0]
-            var modify_details_submit_btn = details_div.getElementsByClassName("modify_details_submit_btn")[0]
-            var modify_details_cancel_btn = details_div.getElementsByClassName("modify_details_cancel_btn")[0]
-    
-            details_time.style.display='none'
-            details_content.style.display='none'
-            modify_details.style.display='none'
-            delete_details.style.display='none'
-            
-            modify_details_time.style.display='flex'
-            modify_details_content.style.display='flex'
-            modify_details_submit_btn.style.display='inline-block'
-            modify_details_cancel_btn.style.display='inline-block'
-        }
-    
-        function modify_details_cancel_event(selected){
-            var details_div = selected.closest('.details_div')
-            var details_time = details_div.getElementsByClassName("details_time")[0]
-            var details_content = details_div.getElementsByClassName("details_content")[0]
-            var modify_details_time = details_div.getElementsByClassName("modify_details_time")[0]
-            var modify_details_content = details_div.getElementsByClassName("modify_details_content")[0]
-            var modify_details = details_div.getElementsByClassName("modify_details")[0]
-            var delete_details = details_div.getElementsByClassName("delete_details")[0]
-            var modify_details_submit_btn = details_div.getElementsByClassName("modify_details_submit_btn")[0]
-            var modify_details_cancel_btn = details_div.getElementsByClassName("modify_details_cancel_btn")[0]
-    
-            details_time.style.display='flex'
-            details_content.style.display='flex'
-            modify_details.style.display='inline-block'
-            delete_details.style.display='inline-block'
-    
-    
-            modify_details_time.style.display='none'
-            modify_details_content.style.display='none'
-            modify_details_submit_btn.style.display='none'
-            modify_details_cancel_btn.style.display='none'
-        }
-    
-        function select_member_event(selected){
-            console.log(selected)
-            var member_name = selected.getElementsByClassName('member_name')[0].innerHTML
-            var member_id = selected.getElementsByClassName('member_id')[0].innerHTML
-            var member_key = selected.getElementsByClassName("member_key")[0].value;
-            var member_department = selected.getElementsByClassName("member_department")[0].value;
-    
-
-            console.log(member_key)
-
-            var form = document.createElement("form")
-            form.action="/week09/jsp/main.jsp"
-
-            var member_key_input = document.createElement("input")
-            member_key_input.type = "hidden"
-            member_key_input.name = "member_key"
-            member_key_input.value = member_key
-            form.appendChild(member_key_input)
-
-            var member_id_input = document.createElement("input")
-            member_id_input.type = "hidden"
-            member_id_input.name = "member_id_input"
-            member_id_input.value = member_id
-            form.appendChild(member_id_input)
-
-            var member_department_input = document.createElement("input")
-            member_department_input.type = "hidden"
-            member_department_input.name = "member_department_input"
-            member_department_input.value = member_department
-            form.appendChild(member_department_input)
-
-            var member_name_input = document.createElement("input")
-            member_name_input.type = "hidden"
-            member_name_input.name = "member_name_input"
-            member_name_input.value = member_name
-            form.appendChild(member_name_input)
-
-
-            document.body.appendChild(form)
-            form.submit()
-    
-            var member_info = document.getElementById("member_info")
-            var member_name_div=document.getElementById("member_name_div")
-            var member_id_div=document.getElementById("member_id_div")
-            var hidden_menu = document.getElementById("hidden_menu")
-            var dark_background = document.getElementById("dark_background")
-    
-            member_info.style.display='flex'
-            member_name_div.innerHTML= member_name
-            member_id_div.innerHTML= member_id
-            hidden_menu.style.right = '-260px'
-            dark_background.style.display = 'none'
-        }
-    
-        function select_me_event(){
-            location.href="/week09/jsp/main.jsp"
-        }
-    
-        function check_event() {
-  
-            var input_date = document.getElementById("input_date").value
-            var input_hour_value = document.getElementsByClassName("input_hour_value")[0]
-            var input_minute_value = document.getElementsByClassName("input_minute_value")[0]
-            var input_apm_value = document.getElementsByClassName("input_apm_value")[0]
-            console.log(input_hour_value.value)
-            if (input_date.trim() === "") {
-                document.getElementById("alert_content").style.display = "block"
-                return false
-            }
-            else {
-                document.getElementById("alert_content").style.display = "none"
-                if (input_hour_value.value === ""){
-                    input_hour_value.value = "1";
-                }
-                if(input_minute_value.value === ""){
-                    input_minute_value.value = "00";
-                }
-                if(input_apm_value.value === "") {
-                    input_apm_value.value = "AM";
-                }
-                return true
-            }
-        }
-
+        
         function make_calender(selected_month) {
             var table = document.getElementById("calender")
             var selected_year = document.getElementById("year").innerHTML
             var year_cnt = 0
             var row_cnt = 0;
+
             if (selected_month == 1 || selected_month == 3 || selected_month == 5 || selected_month == 7 || selected_month == 8 || selected_month == 10 || selected_month == 12) {
                 year_cnt = 31
                 row_cnt = 5
@@ -960,7 +932,7 @@
                 year_cnt = 30
                 row_cnt = 5
             }
-    
+
             for (var i = 0; i < row_cnt; i++) {
                 var tr = document.createElement("tr")
                 for (var j = 0; j < 7; j++) {
@@ -971,17 +943,16 @@
                         div.classList.add("day_txt")
                         div.innerHTML = day
                         td.appendChild(div)
-                        
                         td.id = selected_year+"-"+selected_month +"-"+day
                         td.onclick = function () {
-                            td_click_event(this.id)
+                            td_click_event(this.id) // 2023-08-04 이런식
                         }
                     }
                     tr.appendChild(td)
                 }
                 table.appendChild(tr)
             }
-            have_shedule();
+            have_shedule(); // 일정있으면 동그라미 표시
         }
     
         function make_month(){ // month 버튼 만들기
@@ -998,18 +969,12 @@
                 month_div.appendChild(button)
             }
         }
-    
+
         function delete_calender() {
             var table = document.getElementById("calender")
             while (table.firstChild) {
                 table.removeChild(table.firstChild)
             }
         }
-        document.getElementById("name").innerHTML='<%=name_value%>'
-        document.getElementById("id").innerHTML='<%=id_value%>'
-        document.getElementById("phone").innerHTML='<%=phone_value%>'
-        document.getElementById("rank").innerHTML='<%=rank_value%>'
-        document.getElementById("department").innerHTML='<%=department_value%>'
-
     </script>
 </body>
