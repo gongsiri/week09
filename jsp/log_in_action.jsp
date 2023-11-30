@@ -14,7 +14,7 @@
     String name_value="";
     String rank_value="";
     String department_value="";
-    int check = 0; // pw와 id 같은지
+    int check = 0;
 
     Pattern id_pattern = Pattern.compile("^[a-zA-Z0-9]{6,20}$");
     Pattern pw_pattern = Pattern.compile("^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{6,30}$");
@@ -27,33 +27,38 @@
         Class.forName("com.mysql.jdbc.Driver");
         Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
         
-        String sql = "SELECT * FROM user WHERE id= ? AND pw = ?";
+        String sql = "SELECT * FROM user WHERE id= ?";
         PreparedStatement query = connect.prepareStatement(sql);
         query.setString(1, id_value);
-        query.setString(2, pw_value);
         ResultSet result = query.executeQuery();
 
-        //만약 입력한 pw 값과 입력한 id의 저장된 pw값이 같으면 check = 1
         if(result.next()){
-            check = 1;
-            key_value = result.getInt("user_key");
-            phone_value = result.getString("phone");
-            name_value  = result.getString("name");
-            rank_value = result.getString("rank");
-            department_value = result.getString("department");
-
-            session.setAttribute("key_value",key_value);
-            session.setAttribute("pw_value",pw_value);
-            session.setAttribute("phone_value",phone_value);
-            session.setAttribute("name_value",name_value);
-            session.setAttribute("id_value",id_value);
-            session.setAttribute("rank_value",rank_value);
-            session.setAttribute("department_value",department_value);
+            if(result.getString("pw").equals(pw_value)){
+                check = 1;
+                key_value = result.getInt("user_key");
+                phone_value = result.getString("phone");
+                name_value  = result.getString("name");
+                rank_value = result.getString("rank");
+                department_value = result.getString("department");
+    
+                session.setAttribute("key_value",key_value);
+                session.setAttribute("pw_value",pw_value);
+                session.setAttribute("phone_value",phone_value);
+                session.setAttribute("name_value",name_value);
+                session.setAttribute("id_value",id_value);
+                session.setAttribute("rank_value",rank_value);
+                session.setAttribute("department_value",department_value);
+            } else{ // 비밀번호 틀림
+                check = 2;
+            }
+        } else{ // 계정이 없음
+            check =0;
         }
     } catch(Exception e){
         e.printStackTrace();
         return;
     }
+    
 %>
 <head>
     <meta charset="UTF-8">
@@ -62,8 +67,12 @@
 </head>
 <body>
     <script>
-        if(<%=check%>==0){ // pw와 id가 다르면
-            alert("로그인에 실패했습니다.")
+        if(<%=check%>==0){ // 계정이 없으면
+            alert("입력된 정보로 가입된 계정이 없습니다.")
+            history.back()
+        }
+        else if(<%=check%>==2){
+            alert("비밀번호가 틀렸습니다.")
             history.back()
         }
         else{

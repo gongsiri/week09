@@ -19,7 +19,7 @@
 
         String sql = "DELETE FROM user WHERE user_key= ?";
         PreparedStatement query = connect.prepareStatement(sql);
-        query.setString(1, key_value);
+        query.setInt(1, key_value);
         query.executeUpdate();
     } catch(Exception e){
         e.printStackTrace();

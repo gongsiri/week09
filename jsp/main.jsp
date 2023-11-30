@@ -251,12 +251,6 @@
                 document.getElementById("member_id_div").innerHTML= '<%=member_id_input%>'
                 document.getElementById("hidden_menu").style.right = '-260px'
                 document.getElementById("dark_background").style.display = 'none'
-                var modify_details = document.getElementsByClassName("modify_details")
-                var delete_details = document.getElementsByClassName("delete_details")
-                for(var i=0; i<modify_details.length; i++){ // 수정 삭제 버튼 안 보이게
-                    modify_details[i].style.display="none"
-                    delete_details[i].style.display="none"
-                }
             }
         }
 
@@ -599,16 +593,13 @@
                 var minute_div = selected.closest('#input_date_div')
             }
             var minute_element = minute_div.getElementsByClassName("minute")[0].innerHTML
-            var minute = parseInt(minute_element, 10)
-            if (minute == 0) {
+            var minute = parseInt(minute_element, 10) - 1
+            if (minute == -1) {
                 minute = 59
             }
-            else {
-                minute -= 1
-                minute = (minute < 10 ? '0' : '') + minute
-                minute_div.getElementsByClassName("minute")[0].innerHTML = minute
-                minute_div.getElementsByClassName("input_minute_value")[0].value= minute
-            }
+            minute = (minute < 10 ? '0' : '') + minute
+            minute_div.getElementsByClassName("minute")[0].innerHTML = minute
+            minute_div.getElementsByClassName("input_minute_value")[0].value= minute
         }
     
         function apm_change_event(selected) {
@@ -718,7 +709,7 @@
             var apm = document.createElement("button") // 수정 클릭시 apm 버튼
             apm.className="apm"
             apm.type="button"
-            apm.innerHTML="AM"
+            apm.innerHTML=selected_apm
             apm.onclick=function(){
                 apm_change_event(this)
             }
@@ -857,6 +848,15 @@
             document.getElementById("year_value").value = year
             document.getElementById("month_value").value = month
             document.getElementById("day_value").value = day
+
+            if('<%=key_value%>'!= '<%=session.getAttribute("key_value")%>'){
+                var modify_details = document.getElementsByClassName("modify_details")
+                var delete_details = document.getElementsByClassName("delete_details")
+                for(var i=0; i<modify_details.length; i++){ // 수정 삭제 버튼 안 보이게
+                    modify_details[i].style.display="none"
+                    delete_details[i].style.display="none"
+                }
+            }
         }
     
         function make_me(){ // (나) 버튼
