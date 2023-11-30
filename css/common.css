@@ -21,3 +21,18 @@ header{
     border: none;
     cursor: pointer;
 }
+#back_page{
+    margin-left: 10px;
+    margin-top:10px;
+    background-color: var(--main-color);
+    border:none;
+    height: 40px;
+    font-size:large;
+    cursor: pointer;
+    display: none;
+}
+@media screen and (max-width: 475px) {
+    #back_page{
+        display: block;
+    }
+}

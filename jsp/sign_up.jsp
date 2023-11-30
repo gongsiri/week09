@@ -142,5 +142,8 @@
             </div>
         </form>
     </main>
+    <footer>
+        <input type="button" id="back_page" value="BACK" onclick="history.back()">
+    </footer>
 </body>
 </html>

@@ -8,6 +8,10 @@
 <%
     //session.getAttribute는 Object 자료형이기에 String으로 형변환 해줌
     Object key_value_ob = session.getAttribute("key_value");
+    if(key_value_ob == null){
+        response.sendRedirect("/week09/jsp/log_in.jsp");
+        return;
+    }
     Object id_value_ob = session.getAttribute("id_value");
     Object pw_value_ob = session.getAttribute("pw_value");
     Object phone_value_ob = session.getAttribute("phone_value");
@@ -117,6 +121,9 @@
             </div>
         </form>
     </main>
+    <footer>
+        <input type="button" id="back_page" value="BACK" onclick="history.back()">
+    </footer>
     <script>
         function check_event(){
             var pw = document.getElementById("pw").value

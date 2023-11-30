@@ -53,19 +53,19 @@
         member_list.add(member_info);
     }
 
+    if("팀장".equals(rank_value)){
+        if(request.getParameter("member_key")!=null){
+
+        }
+    }
     if(request.getParameter("member_key") != null && "팀장".equals(rank_value)){  // 팀장의 권한으로 팀원 페이지를 볼 때 
         String member_department_input = request.getParameter("member_department_input");
-        if(department_value.equals(member_department_input)){
+        if(member_department_input.equals(department_value)){
             key_value = Integer.parseInt(request.getParameter("member_key")); // key_value를 팀원의 key로 바꿔줌 (session은 그대로)
             member_name_input = request.getParameter("member_name_input");
             member_id_input = request.getParameter("member_id_input");
-        }else{
-            response.sendRedirect("/week09/jsp/main.jsp");
-            return;
         }
-    }else{
-        response.sendRedirect("/week09/jsp/main.jsp");
-        return;
+
     }
     String sql2 = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS formatted_date, COUNT(*) AS schedule_count FROM schedule WHERE user_key = ? GROUP BY formatted_date";
     PreparedStatement query2 = connect.prepareStatement(sql2);
@@ -216,6 +216,9 @@
             </div>
         </div>
     </main>
+    <footer>
+        <input type="button" id="back_page" value="BACK" onclick="history.back()">
+    </footer>
     <script>
         var today = new Date() // 오늘 날짜
         var today_year = today.getFullYear()
@@ -664,6 +667,8 @@
                 member_name.className="member_name"
                 member_name.innerHTML=member_list[i][1]
 
+                console.log(member_name.innerHTML)
+
                 var member_id = document.createElement("div")
                 member_id.className="member_id"
                 member_id.innerHTML=member_list[i][0]
@@ -678,6 +683,8 @@
                 member_department.type="hidden"
                 member_department.className="member_department"
                 member_department.value = member_list[i][3]
+
+                console.log(member_department.value)
 
                 button.appendChild(member_name)
                 button.appendChild(member_id)
@@ -877,6 +884,7 @@
             var member_name = selected.getElementsByClassName('member_name')[0].innerHTML
             var member_id = selected.getElementsByClassName('member_id')[0].innerHTML
             var member_key = selected.getElementsByClassName("member_key")[0].value;
+            var member_department = selected.getElementsByClassName("member_department")[0].value;
     
 
             console.log(member_key)

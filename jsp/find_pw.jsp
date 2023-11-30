@@ -51,5 +51,8 @@
             <input type="button" class="button" id="find_id_btn" value="아이디 찾기" onclick="location.href='/week09/jsp/find_id.jsp'">
         </div>
     </main>
+    <footer>
+        <input type="button" id="back_page" value="BACK" onclick="history.back()">
+    </footer>
 </body>
 </html>

@@ -59,5 +59,8 @@
             <input type="button" value="다시 찾기" id="refind" onclick="location.href='/week09/jsp/find_pw.jsp'">
         </div>
     </main>
+    <footer>
+        <input type="button" id="back_page" value="BACK" onclick="history.back()">
+    </footer>
 </body>
 </html>

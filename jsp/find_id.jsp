@@ -44,5 +44,8 @@
             <input type="button" class="button" id="find_pw_btn" value="비밀번호찾기" onclick="location.href='/week09/jsp/find_pw.jsp'">
         </div>
     </main>
+    <footer>
+        <input type="button" id="back_page" value="BACK" onclick="history.back()">
+    </footer>
 </body>
 </html>
