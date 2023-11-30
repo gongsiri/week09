@@ -34,18 +34,23 @@
     else if("AM".equals(apm_value) && hour_value == 12){ // 12 am일 경우
         hour_value = 0;
     }
-    
+
     String date_value = year_value + "-" + month_value + "-" + day_value + " " + hour_value + ":" + minute_value + ":00"; // timestamp 형식으로
     
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
-
-    String sql = "INSERT INTO schedule (user_key, date, content) VALUES (?,?,?)";
-    PreparedStatement query = connect.prepareStatement(sql);
-    query.setInt(1,key_value);
-    query.setString(2,date_value);
-    query.setString(3,content_value);
-    query.executeUpdate();
+    try{
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
+    
+        String sql = "INSERT INTO schedule (user_key, date, content) VALUES (?,?,?)";
+        PreparedStatement query = connect.prepareStatement(sql);
+        query.setInt(1,key_value);
+        query.setString(2,date_value);
+        query.setString(3,content_value);
+        query.executeUpdate();
+    } catch (Exception e){
+        e.printStackTrace();
+        return;
+    }
 %>
 
 <head>

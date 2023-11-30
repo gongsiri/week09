@@ -20,19 +20,24 @@
         response.sendRedirect("/week09/jsp/find_pw.jsp");
         return;
     }
-
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
-
-    String sql = "SELECT * FROM user WHERE name= ? AND id= ? AND phone= ?";
-    PreparedStatement query = connect.prepareStatement(sql);
-    query.setString(1, name_value);
-    query.setString(2, id_value);
-    query.setString(3, phone_value);
-    ResultSet result = query.executeQuery();
-    if(result.next()){
-        pw_value = result.getString("pw");
-        check=1;
+    
+    try{
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
+    
+        String sql = "SELECT * FROM user WHERE name= ? AND id= ? AND phone= ?";
+        PreparedStatement query = connect.prepareStatement(sql);
+        query.setString(1, name_value);
+        query.setString(2, id_value);
+        query.setString(3, phone_value);
+        ResultSet result = query.executeQuery();
+        if(result.next()){
+            pw_value = result.getString("pw");
+            check=1;
+        }
+    } catch (Exception e){
+        e.printStackTrace();
+        return;
     }
 %>
 

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html" pageEncoding="utf-8" %>
 <%@ page import="java.sql.DriverManager" %>
 <%@ page import="java.sql.Connection" %>
+<%@ page import="java.sql.ResultSet" %>
 <%@ page import="java.sql.PreparedStatement" %>
 <%@ page import="java.util.regex.Pattern" %>
 
@@ -13,6 +14,7 @@
     String phone_value = request.getParameter("phone_value");
     String rank_value = request.getParameter("rank_value");
     String department_value = request.getParameter("department_value");
+    int check = 0;
 
     Pattern id_pattern = Pattern.compile("^[a-zA-Z0-9]{6,20}$");
     Pattern pw_pattern = Pattern.compile("^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{6,30}$");
@@ -22,20 +24,35 @@
         response.sendRedirect("/week09/jsp/log_in.jsp");
         return;
     }
-
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
-
-    String sql = "INSERT INTO user (id,pw,name,phone,rank,department) VALUES (?,?,?,?,?,?)";
-    PreparedStatement query = connect.prepareStatement(sql);
-    query.setString(1, id_value);
-    query.setString(2, pw_value);
-    query.setString(3, name_value);
-    query.setString(4, phone_value);
-    query.setString(5, rank_value);
-    query.setString(6, department_value);
-    
-    query.executeUpdate();
+    try{
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
+        if(rank_value.equals("팀장")){
+            String sql = "SELECT * FROM user WHERE department =? AND rank =?"; // 팀장이 있는데 선택했을 시
+            PreparedStatement query = connect.prepareStatement(sql);
+            query.setString(1, department_value);
+            query.setString(2, rank_value);
+            ResultSet result = query.executeQuery();
+            if(result.next()){
+                check = 1;
+            }
+        }
+        
+        if(check == 0){
+            String sql2 = "INSERT INTO user (id,pw,name,phone,rank,department) VALUES (?,?,?,?,?,?)";
+            PreparedStatement query2 = connect.prepareStatement(sql2);
+            query2.setString(1, id_value);
+            query2.setString(2, pw_value);
+            query2.setString(3, name_value);
+            query2.setString(4, phone_value);
+            query2.setString(5, rank_value);
+            query2.setString(6, department_value);
+            query2.executeUpdate();
+        }
+    } catch (Exception e){
+        e.printStackTrace();
+        return;
+    }
 %>
 
 <head>
@@ -45,7 +62,12 @@
 </head>
 <body>
     <script>
-        alert("회원가입에 성공했습니다.")
-        location.href="/week09/jsp/log_in.jsp"
+        if(<%=check%> == 1){
+            alert("팀장은 이미 존재합니다.")
+            history.back()
+        }else{
+            alert("회원가입에 성공했습니다.")
+            location.href="/week09/jsp/log_in.jsp"
+        }
     </script>
 </body>

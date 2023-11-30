@@ -17,18 +17,22 @@
         response.sendRedirect("/week09/jsp/find_id.jsp");
         return;
     }
-
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
-
-    String sql = "SELECT * FROM user WHERE name= ? AND phone= ?";
-    PreparedStatement query = connect.prepareStatement(sql);
-    query.setString(1, name_value);
-    query.setString(2, phone_value);
-    ResultSet result = query.executeQuery();
-    if(result.next()){
-        id_value = result.getString("id");
-        check=1;
+    try{
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
+    
+        String sql = "SELECT * FROM user WHERE name= ? AND phone= ?";
+        PreparedStatement query = connect.prepareStatement(sql);
+        query.setString(1, name_value);
+        query.setString(2, phone_value);
+        ResultSet result = query.executeQuery();
+        if(result.next()){
+            id_value = result.getString("id");
+            check=1;
+        }
+    } catch (Exception e){
+        e.printStackTrace();
+        return;
     }
 %>
 

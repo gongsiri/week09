@@ -14,16 +14,20 @@
         response.sendRedirect("/week09/jsp/sign_up.jsp");
         return;
     }
-
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
-
-    String sql = "SELECT * FROM user WHERE id=?";
-    PreparedStatement query = connect.prepareStatement(sql);
-    query.setString(1, id_value);
-    ResultSet result = query.executeQuery();
-    if(result.next()){ // 유저가 있으면 check = 1
-        check=1;
+    try{
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
+    
+        String sql = "SELECT * FROM user WHERE id=?";
+        PreparedStatement query = connect.prepareStatement(sql);
+        query.setString(1, id_value);
+        ResultSet result = query.executeQuery();
+        if(result.next()){ // 유저가 있으면 check = 1
+            check=1;
+        }
+    } catch (Exception e){
+        e.printStackTrace();
+        return;
     }
 %>
 

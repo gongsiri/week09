@@ -12,13 +12,19 @@
         return;
     }
     int key_value = Integer.parseInt(key_value_ob.toString());
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
 
-    String sql = "DELETE FROM user WHERE user_key= ?";
-    PreparedStatement query = connect.prepareStatement(sql);
-    query.setString(1, key_value);
-    query.executeUpdate();
+    try{
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
+
+        String sql = "DELETE FROM user WHERE user_key= ?";
+        PreparedStatement query = connect.prepareStatement(sql);
+        query.setString(1, key_value);
+        query.executeUpdate();
+    } catch(Exception e){
+        e.printStackTrace();
+        return;
+    }
 %>
 
 <head>

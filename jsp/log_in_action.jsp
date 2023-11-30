@@ -23,31 +23,36 @@
         return;
     }
 
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
-    
-    String sql = "SELECT * FROM user WHERE id= ? AND pw = ?";
-    PreparedStatement query = connect.prepareStatement(sql);
-    query.setString(1, id_value);
-    query.setString(2, pw_value);
-    ResultSet result = query.executeQuery();
+    try{
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
+        
+        String sql = "SELECT * FROM user WHERE id= ? AND pw = ?";
+        PreparedStatement query = connect.prepareStatement(sql);
+        query.setString(1, id_value);
+        query.setString(2, pw_value);
+        ResultSet result = query.executeQuery();
 
-    //만약 입력한 pw 값과 입력한 id의 저장된 pw값이 같으면 check = 1
-    if(result.next()){
-        check = 1;
-        key_value = result.getInt("user_key");
-        phone_value = result.getString("phone");
-        name_value  = result.getString("name");
-        rank_value = result.getString("rank");
-        department_value = result.getString("department");
+        //만약 입력한 pw 값과 입력한 id의 저장된 pw값이 같으면 check = 1
+        if(result.next()){
+            check = 1;
+            key_value = result.getInt("user_key");
+            phone_value = result.getString("phone");
+            name_value  = result.getString("name");
+            rank_value = result.getString("rank");
+            department_value = result.getString("department");
 
-        session.setAttribute("key_value",key_value);
-        session.setAttribute("pw_value",pw_value);
-        session.setAttribute("phone_value",phone_value);
-        session.setAttribute("name_value",name_value);
-        session.setAttribute("id_value",id_value);
-        session.setAttribute("rank_value",rank_value);
-        session.setAttribute("department_value",department_value);
+            session.setAttribute("key_value",key_value);
+            session.setAttribute("pw_value",pw_value);
+            session.setAttribute("phone_value",phone_value);
+            session.setAttribute("name_value",name_value);
+            session.setAttribute("id_value",id_value);
+            session.setAttribute("rank_value",rank_value);
+            session.setAttribute("department_value",department_value);
+        }
+    } catch(Exception e){
+        e.printStackTrace();
+        return;
     }
 %>
 <head>

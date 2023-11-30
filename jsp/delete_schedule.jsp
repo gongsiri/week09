@@ -19,14 +19,18 @@
         response.sendRedirect("/week09/jsp/log_in.jsp");
         return;
     }
-
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
-
-    String sql = "DELETE FROM schedule WHERE schedule_key= ?";
-    PreparedStatement query = connect.prepareStatement(sql);
-    query.setInt(1, schedule_key);
-    query.executeUpdate();
+    try{
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
+    
+        String sql = "DELETE FROM schedule WHERE schedule_key= ?";
+        PreparedStatement query = connect.prepareStatement(sql);
+        query.setInt(1, schedule_key);
+        query.executeUpdate();
+    } catch (Exception e){
+        e.printStackTrace();
+        return;
+    }
 %>
 
 <head>

@@ -5,8 +5,8 @@
 <%@ page import="java.sql.ResultSet" %>
 <%@ page import="java.util.ArrayList" %>
 
-// 일정 수정 jsp를 다른 사용자가 접근하는 것도 막아야 하나요??
 <%
+// 일정 수정 jsp를 다른 사용자가 접근하는 것도 막아야 하나요??
     Object key_value_ob = session.getAttribute("key_value");
     if(key_value_ob == null){
         response.sendRedirect("/week09/jsp/log_in.jsp");
@@ -27,85 +27,90 @@
     String member_name_input = ""; // 팀장의 권한으로 팀원 페이지를 볼 때 보여질 팀원의 이름
     String member_id_input = "";
 
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
-
-    String sql = "SELECT * FROM user WHERE department=? AND id !=?"; // 현재 사용자의 부서에 속한 팀원들의 목록(나 제외)
-    PreparedStatement query = connect.prepareStatement(sql);
-    query.setString(1, department_value);
-    query.setString(2, id_value);
-    ResultSet result = query.executeQuery();
-
     ArrayList<ArrayList<String>> member_list = new ArrayList<ArrayList<String>>(); // 팀원들의 id, name, key 담아줌
-    while(result.next()){ 
-        String member_id = result.getString("id");
-        String member_name = result.getString("name");
-        int member_key = result.getInt("user_key");
-        String member_department = result.getString("department");
-
-        ArrayList<String> member_info = new ArrayList<String>();
-        member_info.add("\""+member_id+"\"");
-        member_info.add("\""+member_name+"\"");
-        member_info.add("\""+member_key+"\"");
-        member_info.add("\""+member_department+"\"");
-        member_list.add(member_info);
-    }
-
-    if(request.getParameter("member_key") != null && "팀장".equals(rank_value)){  // 팀장의 권한으로 팀원 페이지를 볼 때 (아니라면 그냥 세션이 key_value가 됨)
-        String member_department_input = request.getParameter("member_department_input");
-        if(member_department_input.equals(department_value)){ // 같은부서일 때
-            key_value = Integer.parseInt(request.getParameter("member_key")); // key_value를 팀원의 key로 바꿔줌 (session은 그대로)
-            member_name_input = request.getParameter("member_name_input");
-            member_id_input = request.getParameter("member_id_input");
-        }
-    }
-    // 날짜별로 일정 개수 가져옴
-    String sql2 = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS formatted_date, YEAR(date) as year, MONTH(date) as month, DAY(date) as day, COUNT(*) AS schedule_count FROM schedule WHERE user_key = ? GROUP BY formatted_date"; 
-    PreparedStatement query2 = connect.prepareStatement(sql2);
-    query2.setInt(1, key_value);
-    ResultSet result2 = query2.executeQuery();
-
     ArrayList<ArrayList<String>> schedule_count_list = new ArrayList<ArrayList<String>>(); 
-
-    while(result2.next()){
-        String date = result2.getString("formatted_date");
-        String year = result2.getString("year");
-        String month = result2.getString("month");
-        String day = result2.getString("day");
-        int schedule_count = result2.getInt("schedule_count");
-        
-        ArrayList<String> schedule_count_info = new ArrayList<String>();
-        schedule_count_info.add("\""+date+"\"");
-        schedule_count_info.add(String.valueOf(schedule_count));
-        schedule_count_info.add("\""+year+"\"");
-        schedule_count_info.add("\""+month+"\"");
-        schedule_count_info.add("\""+day+"\"");
-        schedule_count_list.add(schedule_count_info);
-    }
-
-    // 날짜,시,분,내용,키 가져옴
-    String sql3 = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS formatted_date, HOUR(date) AS hour, MINUTE(date) AS minute, content, schedule_key FROM schedule WHERE user_key =? ORDER BY date"; // 고치자 월 년 일 다 꺼내오자
-    PreparedStatement query3 = connect.prepareStatement(sql3);
-    query3.setInt(1,key_value);
-    ResultSet result3 = query3.executeQuery();
-
     ArrayList<ArrayList<String>> schedule_list = new ArrayList<ArrayList<String>>();
 
-    while(result3.next()){
-        String formatted_date = result3.getString("formatted_date");
-        String hour = result3.getString("hour");
-        String minute = result3.getString("minute");
-        String content = result3.getString("content");
-        int schedule_key = result3.getInt("schedule_key");
+    try{
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
 
-        ArrayList<String> schedule_info = new ArrayList<String>();
-        schedule_info.add("\""+formatted_date+"\"");
-        schedule_info.add("\""+hour+"\"");
-        schedule_info.add("\""+minute+"\"");
-        schedule_info.add("\""+content+"\"");
-        schedule_info.add(String.valueOf(schedule_key));
-        schedule_list.add(schedule_info);
-    }
+        String sql = "SELECT * FROM user WHERE department=? AND id !=?"; // 현재 사용자의 부서에 속한 팀원들의 목록(나 제외)
+        PreparedStatement query = connect.prepareStatement(sql);
+        query.setString(1, department_value);
+        query.setString(2, id_value);
+        ResultSet result = query.executeQuery();
+
+        while(result.next()){ 
+            String member_id = result.getString("id");
+            String member_name = result.getString("name");
+            int member_key = result.getInt("user_key");
+            String member_department = result.getString("department");
+
+            ArrayList<String> member_info = new ArrayList<String>();
+            member_info.add("\""+member_id+"\"");
+            member_info.add("\""+member_name+"\"");
+            member_info.add("\""+member_key+"\"");
+            member_info.add("\""+member_department+"\"");
+            member_list.add(member_info);
+        }
+
+        if(request.getParameter("member_key") != null && "팀장".equals(rank_value)){  // 팀장의 권한으로 팀원 페이지를 볼 때 (아니라면 그냥 세션이 key_value가 됨)
+            String member_department_input = request.getParameter("member_department_input");
+            if(member_department_input.equals(department_value)){ // 같은부서일 때
+                key_value = Integer.parseInt(request.getParameter("member_key")); // key_value를 팀원의 key로 바꿔줌 (session은 그대로)
+                member_name_input = request.getParameter("member_name_input");
+                member_id_input = request.getParameter("member_id_input");
+            }
+        }
+        // 날짜별로 일정 개수 가져옴
+        String sql2 = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS formatted_date, YEAR(date) as year, MONTH(date) as month, DAY(date) as day, COUNT(*) AS schedule_count FROM schedule WHERE user_key = ? GROUP BY formatted_date"; 
+        PreparedStatement query2 = connect.prepareStatement(sql2);
+        query2.setInt(1, key_value);
+        ResultSet result2 = query2.executeQuery();
+
+        while(result2.next()){
+            String date = result2.getString("formatted_date");
+            String year = result2.getString("year");
+            String month = result2.getString("month");
+            String day = result2.getString("day");
+            int schedule_count = result2.getInt("schedule_count");
+            
+            ArrayList<String> schedule_count_info = new ArrayList<String>();
+            schedule_count_info.add("\""+date+"\"");
+            schedule_count_info.add(String.valueOf(schedule_count));
+            schedule_count_info.add("\""+year+"\"");
+            schedule_count_info.add("\""+month+"\"");
+            schedule_count_info.add("\""+day+"\"");
+            schedule_count_list.add(schedule_count_info);
+        }
+
+        // 날짜,시,분,내용,키 가져옴
+        String sql3 = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS formatted_date, HOUR(date) AS hour, MINUTE(date) AS minute, content, schedule_key FROM schedule WHERE user_key =? ORDER BY date"; // 고치자 월 년 일 다 꺼내오자
+        PreparedStatement query3 = connect.prepareStatement(sql3);
+        query3.setInt(1,key_value);
+        ResultSet result3 = query3.executeQuery();
+
+        while(result3.next()){
+            String formatted_date = result3.getString("formatted_date");
+            String hour = result3.getString("hour");
+            String minute = result3.getString("minute");
+            String content = result3.getString("content");
+            int schedule_key = result3.getInt("schedule_key");
+
+            ArrayList<String> schedule_info = new ArrayList<String>();
+            schedule_info.add("\""+formatted_date+"\"");
+            schedule_info.add("\""+hour+"\"");
+            schedule_info.add("\""+minute+"\"");
+            schedule_info.add("\""+content+"\"");
+            schedule_info.add(String.valueOf(schedule_key));
+            schedule_list.add(schedule_info);
+        } 
+    } catch(Exception e){
+        e.printStackTrace();
+        response.sendRedirect("/week09/jsp/error_page.jsp");
+        return;
+    } 
 %>
 
 <!DOCTYPE html>
@@ -411,7 +416,7 @@
             document.body.appendChild(form)
             form.submit();
         }
-        unction modify_details_event(selected) { // 수정 버튼 누를 시
+        function modify_details_event(selected) { // 수정 버튼 누를 시
             var details_div = selected.closest('.details_div')
             var details_time = details_div.getElementsByClassName("details_time")[0]
             var details_content = details_div.getElementsByClassName("details_content")[0]

@@ -36,15 +36,20 @@
 
     String date_value = day_value + " " + hour_value + ":" + minute_value + ":00";
 
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
-    
-    String sql = "UPDATE schedule SET date=?, content=? WHERE schedule_key=?"; 
-    PreparedStatement query = connect.prepareStatement(sql);
-    query.setString(1, date_value);
-    query.setString(2, content_value);
-    query.setInt(3, key_value);
-    query.executeUpdate();
+    try{
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
+        
+        String sql = "UPDATE schedule SET date=?, content=? WHERE schedule_key=?"; 
+        PreparedStatement query = connect.prepareStatement(sql);
+        query.setString(1, date_value);
+        query.setString(2, content_value);
+        query.setInt(3, key_value);
+        query.executeUpdate();
+    } catch(Exception e){
+        e.printStackTrace();
+        return;
+    }
 %>
 
 <head>
