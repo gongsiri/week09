@@ -94,7 +94,6 @@
     <footer>
         <input type="button" id="back_page" value="BACK" onclick="history.back()">
     </footer>
-
     <script>
         function check_event(){
             var id = document.getElementById("id").value
@@ -142,7 +141,6 @@
                 return false
             }
             window.open('/week09/jsp/id_duplication_check_action.jsp?id_value='+ id,'','width=500,height=350')
-    
         }
     </script>
 </body>

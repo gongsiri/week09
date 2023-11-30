@@ -26,6 +26,7 @@
     String rank_value = String.valueOf(rank_value_ob);
     String department_value = String.valueOf(department_value_ob);
 %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -119,8 +120,24 @@
     <footer>
         <input type="button" id="back_page" value="BACK" onclick="history.back()">
     </footer>
-
     <script>
+        window.onload=function(){
+            document.getElementById("id").value='<%=id_value%>'
+            document.getElementById("name").value='<%=name_value%>'
+            document.getElementById("phone").value='<%=phone_value%>'
+            if('<%=rank_value%>'==="팀원"){
+                document.getElementById("member").checked = true
+            }
+            else if('<%=rank_value%>'==="팀장"){
+                document.getElementById("leader").checked = true
+            }
+            if('<%=department_value%>'==="개발팀"){
+                document.getElementById("develop").checked = true
+            }
+            else if('<%=department_value%>'==="디자인팀"){
+                document.getElementById("design").checked = true
+            }
+        }
         function check_event(){
             var pw = document.getElementById("pw").value
             var pw_check = document.getElementById("pw_check").value
@@ -151,22 +168,7 @@
                 return false
             }
         }
-        document.getElementById("id").value='<%=id_value%>'
-        document.getElementById("name").value='<%=name_value%>'
-        document.getElementById("phone").value='<%=phone_value%>'
-        if('<%=rank_value%>'==="팀원"){
-            document.getElementById("member").checked = true
-        }
-        else if('<%=rank_value%>'==="팀장"){
-            document.getElementById("leader").checked = true
-        }
-        if('<%=department_value%>'==="개발팀"){
-            document.getElementById("develop").checked = true
-        }
-        else if('<%=department_value%>'==="디자인팀"){
-            document.getElementById("design").checked = true
-        }
-        
+    
         function confirm_resign_event(){
             if(confirm("정말 탈퇴하시겠습니까?")){
                 location.href = '/week09/jsp/resign_action.jsp'

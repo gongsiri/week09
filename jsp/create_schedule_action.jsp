@@ -57,5 +57,4 @@
     <script>
        location.href="/week09/jsp/main.jsp"
     </script>
-
 </body>

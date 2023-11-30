@@ -7,12 +7,11 @@
 
 // 일정 수정 jsp를 다른 사용자가 접근하는 것도 막아야 하나요??
 <%
-    Object id_value_ob = session.getAttribute("id_value"); 
-    if(id_value_ob == null){ // 세션이 없다면 (로그인 상태가 아니면 -> 로그인 페이지로 팅기게)
-        response.sendRedirect("/week09/jsp/log_in.jsp");
-        return;
-    }
     Object key_value_ob = session.getAttribute("key_value");
+    if(key_value_ob == null){
+        response.sendRedirect("/week09/jsp/log_in.jsp");
+    }
+    Object id_value_ob = session.getAttribute("id_value"); 
     Object phone_value_ob = session.getAttribute("phone_value");
     Object name_value_ob = session.getAttribute("name_value");
     Object rank_value_ob = session.getAttribute("rank_value");
@@ -913,7 +912,7 @@
                 document.getElementById("member_list").appendChild(button)
             }
         }
-        
+
         function make_calender(selected_month) {
             var table = document.getElementById("calender")
             var selected_year = document.getElementById("year").innerHTML

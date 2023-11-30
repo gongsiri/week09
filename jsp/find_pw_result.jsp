@@ -57,7 +57,6 @@
     <footer>
         <input type="button" id="back_page" value="BACK" onclick="history.back()">
     </footer>
-
     <script>
         if(<%=check%>==0){
             alert("입력한 정보로 가입된 계정은 없습니다.")

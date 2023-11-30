@@ -45,8 +45,8 @@
     query.setString(2, content_value);
     query.setInt(3, key_value);
     query.executeUpdate();
-
 %>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -56,5 +56,4 @@
     <script>
        location.href="/week09/jsp/main.jsp"
     </script>
-
 </body>

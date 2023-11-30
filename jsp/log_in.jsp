@@ -27,7 +27,6 @@
     <footer>
         <input type="button" id="back_page" value="BACK" onclick="history.back()">
     </footer>
-
     <script>
         function check_event(){
             var id = document.getElementById("id").value

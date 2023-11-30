@@ -79,9 +79,7 @@ form{
     background-color: lightgray;
     cursor: pointer;
 }
-#back_page{
-    margin-right: 30px;
-}
+
 @media screen and (max-width: 475px) {
     .input_wrapper_div{
         flex-direction: column;
