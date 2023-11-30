@@ -38,12 +38,6 @@
     <title>Document</title>
     <link rel="stylesheet" href="/week09/css/find_id_action.css">
     <link rel="stylesheet" href="/week09/css/common.css">
-    <script>
-        if(<%=check%>==0){
-            alert("입력한 정보로 가입된 계정은 없습니다.")
-            history.back()
-        }
-    </script>
 </head>
 <body>
     <main>
@@ -57,4 +51,11 @@
     <footer>
         <input type="button" id="back_page" value="BACK" onclick="history.back()">
     </footer>
+
+    <script>
+        if(<%=check%>==0){
+            alert("입력한 정보로 가입된 계정은 없습니다.")
+            history.back()
+        }
+    </script>
 </body>

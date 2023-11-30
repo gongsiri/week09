@@ -2,6 +2,7 @@
 <%@ page import="java.sql.DriverManager" %>
 <%@ page import="java.sql.Connection" %>
 <%@ page import="java.sql.PreparedStatement" %>
+<%@ page import="java.util.regex.Pattern" %>
 
 <%
     request.setCharacterEncoding("utf-8");
@@ -22,23 +23,19 @@
         return;
     }
 
-    try{
-        Class.forName("com.mysql.jdbc.Driver");
-        Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
+    Class.forName("com.mysql.jdbc.Driver");
+    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
+
+    String sql = "INSERT INTO user (id,pw,name,phone,rank,department) VALUES (?,?,?,?,?,?)";
+    PreparedStatement query = connect.prepareStatement(sql);
+    query.setString(1, id_value);
+    query.setString(2, pw_value);
+    query.setString(3, name_value);
+    query.setString(4, phone_value);
+    query.setString(5, rank_value);
+    query.setString(6, department_value);
     
-        String sql = "INSERT INTO user (id,pw,name,phone,rank,department) VALUES (?,?,?,?,?,?)";
-        PreparedStatement query = connect.prepareStatement(sql);
-        query.setString(1, id_value);
-        query.setString(2, pw_value);
-        query.setString(3, name_value);
-        query.setString(4, phone_value);
-        query.setString(5, rank_value);
-        query.setString(6, department_value);
-        
-        query.executeUpdate();
-    }catch(Exception e){
-        e.printStackTrace();
-    }
+    query.executeUpdate();
 %>
 
 <head>

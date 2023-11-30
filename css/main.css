@@ -247,10 +247,10 @@ p{
     width: 70%;
     word-wrap: break-word;
 }
-.modify_details_submit{
+.modify_details_submit_btn{
     display: none;
 }
-.modify_details_cancel{
+.modify_details_cancel_btn{
     display: none;
 }
 #input_date_div{
@@ -274,7 +274,7 @@ p{
 .time{
     display: flex;
 }
-.modify_details, .delete_details, .modify_details_submit, .modify_details_cancel{
+.modify_details, .delete_details, .modify_details_submit_btn, .modify_details_cancel_btn{
     background-color: var(--main-color);
     border: none;
     cursor: pointer;

@@ -6,23 +6,19 @@
 
 <%
     request.setCharacterEncoding("utf-8");
-    Object id_value_ob = session.getAttribute("id_value");
-    String id_value = String.valueOf(id_value_ob);
-    if(id_value_ob == null){
+    Object key_value_ob = session.getAttribute("key_value");
+    if(key_value_ob == null){
         response.sendRedirect("/week09/jsp/log_in.jsp");
         return;
     }
-    try{
-        Class.forName("com.mysql.jdbc.Driver");
-        Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
-    
-        String sql = "DELETE FROM user WHERE id= ?";
-        PreparedStatement query = connect.prepareStatement(sql);
-        query.setString(1, id_value);
-        query.executeUpdate();
-    }catch(Exception e){
-        e.printStackTrace();
-    }
+    int key_value = Integer.parseInt(key_value_ob.toString());
+    Class.forName("com.mysql.jdbc.Driver");
+    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
+
+    String sql = "DELETE FROM user WHERE user_key= ?";
+    PreparedStatement query = connect.prepareStatement(sql);
+    query.setString(1, key_value);
+    query.executeUpdate();
 %>
 
 <head>

@@ -6,13 +6,12 @@
 <%@ page import="java.util.ArrayList" %>
 
 <%
-    //session.getAttribute는 Object 자료형이기에 String으로 형변환 해줌
     Object key_value_ob = session.getAttribute("key_value");
-    if(key_value_ob == null){
+    if(key_value_ob == null){ // 로그인 된 상태가 아니라면
         response.sendRedirect("/week09/jsp/log_in.jsp");
         return;
     }
-    Object id_value_ob = session.getAttribute("id_value");
+    Object id_value_ob = session.getAttribute("id_value"); // 로그인 session 값
     Object pw_value_ob = session.getAttribute("pw_value");
     Object phone_value_ob = session.getAttribute("phone_value");
     Object name_value_ob = session.getAttribute("name_value");
@@ -26,10 +25,6 @@
     String name_value = String.valueOf(name_value_ob);
     String rank_value = String.valueOf(rank_value_ob);
     String department_value = String.valueOf(department_value_ob);
-
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
-
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -54,7 +49,7 @@
                     아이디
                 </div>
                 <div class="input_div">
-                    <input type="text" readonly id="id" name="id_value"> <!-- onchange : 값에서 딱 뗐을 때 -->
+                    <input type="text" readonly id="id" name="id_value">
                 </div>
             </div>
 
@@ -115,8 +110,8 @@
             </div>
             <input type="hidden" name="session_input" value="<%=key_value%>">
             <div class="submit_btn_div">
-                <input type="submit" value="수정하기" id="sign_up" onclick="modify_info()">
-                <input type="button" value="탈퇴하기" id="withdraw" onclick="location.href='/week09/jsp/resign_action.jsp'">
+                <input type="submit" value="수정하기" id="sign_up">
+                <input type="button" value="탈퇴하기" id="withdraw" onclick="confirm_resign_event()">
                 <input type="button" value="취소" id="cancel" onclick="location.href='/week09/jsp/main.jsp'">
             </div>
         </form>
@@ -124,17 +119,18 @@
     <footer>
         <input type="button" id="back_page" value="BACK" onclick="history.back()">
     </footer>
+
     <script>
         function check_event(){
             var pw = document.getElementById("pw").value
             var pw_check = document.getElementById("pw_check").value
             var name = document.getElementById("name").value
             var phone = document.getElementById("phone").value
-
+    
             var pw_pattern = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{6,30}$/
             var name_pattern = /^[가-힣]{2,5}$/
             var phone_pattern = /^01[0179][0-9]{7,8}$/
-
+    
             if(pw==="" &&pw_check === ""){
                 document.getElementById("pw").value = '<%=pw_value%>'
             }else{
@@ -146,7 +142,6 @@
                     alert("비밀번호를 확인해 주세요")
                 }
             }
-
             if(name==="" || !name_pattern.test(name)){
                 alert("이름을 제대로 입력해 주세요")
                 return false
@@ -170,6 +165,12 @@
         }
         else if('<%=department_value%>'==="디자인팀"){
             document.getElementById("design").checked = true
+        }
+        
+        function confirm_resign_event(){
+            if(confirm("정말 탈퇴하시겠습니까?")){
+                location.href = '/week09/jsp/resign_action.jsp'
+            }
         }
     </script>
 </body>

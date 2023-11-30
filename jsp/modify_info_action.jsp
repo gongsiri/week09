@@ -6,12 +6,12 @@
 
 <%
     request.setCharacterEncoding("utf-8");
-    Object user_key_ob = session.getAttribute("key_value");
-    if(user_key_ob == null){
+    Object key_value_ob = session.getAttribute("key_value");
+    if(key_value_ob == null){ // 로그인 된 상태가 아니라면
         response.sendRedirect("/week09/jsp/log_in.jsp");
         return;
     }
-    int user_key = Integer.parseInt(user_key_ob.toString());
+    int key_value = Integer.parseInt(key_value_ob.toString()); 
     int session_value = Integer.parseInt(request.getParameter("session_input"));
     String id_value = request.getParameter("id_value");
     String pw_value = request.getParameter("pw_value");
@@ -20,24 +20,25 @@
     String rank_value = request.getParameter("rank_value");
     String department_value = request.getParameter("department_value");
 
-    if(user_key != session_value){
+    if(key_value != session_value){ // 현재 로그인 된 사람과 정보 수정할 사람이 다르면
         response.sendRedirect("/week09/jsp/log_in.jsp");
         return;
     }
+    
     Class.forName("com.mysql.jdbc.Driver");
     Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
     
-    // 로그인 세션(아이디)를 통해 값 업데이트
-    String sql = "UPDATE user SET pw=?, name=?, phone=?, rank=?, department=? WHERE id=?"; 
+    String sql = "UPDATE user SET pw=?, name=?, phone=?, rank=?, department=? WHERE user_key=?"; 
     PreparedStatement query = connect.prepareStatement(sql);
     query.setString(1, pw_value);
     query.setString(2, name_value);
     query.setString(3, phone_value);
     query.setString(4, rank_value);
     query.setString(5, department_value);
-    query.setString(6, id_value);
+    query.setInt(6, session_value);
     query.executeUpdate();
-    session.setAttribute("name_value", name_value);
+
+    session.setAttribute("name_value", name_value); // 세션 값 업데이트
     session.setAttribute("pw_value", pw_value);
     session.setAttribute("phone_value", phone_value);
     session.setAttribute("rank_value", rank_value);
@@ -51,7 +52,6 @@
 </head>
 <body>
     <script>
-        alert("수정되었습니다.")
         location.href="/week09/jsp/main.jsp"
     </script>
 </body>

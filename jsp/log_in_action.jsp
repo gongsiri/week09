@@ -18,43 +18,37 @@
 
     Pattern id_pattern = Pattern.compile("^[a-zA-Z0-9]{6,20}$");
     Pattern pw_pattern = Pattern.compile("^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{6,30}$");
-    if(!id_pattern.matcher(id_value).matches() || !pw_pattern.matcher(pw_value).matches()){
+    if(!id_pattern.matcher(id_value).matches() || !pw_pattern.matcher(pw_value).matches()){ // 정규식에 맞지 않을 경우 로그인 페이지로 팅김
         response.sendRedirect("/week09/jsp/log_in.jsp");
         return;
     }
 
-    try{
-        Class.forName("com.mysql.jdbc.Driver");
-        Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
-        
-        String sql = "SELECT * FROM user WHERE id= ? AND pw = ?";
-        PreparedStatement query = connect.prepareStatement(sql);
-        query.setString(1, id_value);
-        query.setString(2, pw_value);
-        ResultSet result = query.executeQuery();
+    Class.forName("com.mysql.jdbc.Driver");
+    Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
     
-        //만약 입력한 pw 값과 입력한 id의 저장된 pw값이 같으면 check = 1
-        //이때 session을 설정해줌(id를 기준으로 했음)
-        if(result.next()){
-            check = 1;
-            key_value = result.getInt("user_key");
-            phone_value = result.getString("phone");
-            name_value  = result.getString("name");
-            rank_value = result.getString("rank");
-            department_value = result.getString("department");
-    
-            session.setAttribute("key_value",key_value);
-            session.setAttribute("pw_value",pw_value);
-            session.setAttribute("phone_value",phone_value);
-            session.setAttribute("name_value",name_value);
-            session.setAttribute("id_value",id_value);
-            session.setAttribute("rank_value",rank_value);
-            session.setAttribute("department_value",department_value);
-        }
-    }catch(Exception e){
-        e.printStackTrace();
+    String sql = "SELECT * FROM user WHERE id= ? AND pw = ?";
+    PreparedStatement query = connect.prepareStatement(sql);
+    query.setString(1, id_value);
+    query.setString(2, pw_value);
+    ResultSet result = query.executeQuery();
+
+    //만약 입력한 pw 값과 입력한 id의 저장된 pw값이 같으면 check = 1
+    if(result.next()){
+        check = 1;
+        key_value = result.getInt("user_key");
+        phone_value = result.getString("phone");
+        name_value  = result.getString("name");
+        rank_value = result.getString("rank");
+        department_value = result.getString("department");
+
+        session.setAttribute("key_value",key_value);
+        session.setAttribute("pw_value",pw_value);
+        session.setAttribute("phone_value",phone_value);
+        session.setAttribute("name_value",name_value);
+        session.setAttribute("id_value",id_value);
+        session.setAttribute("rank_value",rank_value);
+        session.setAttribute("department_value",department_value);
     }
-   
 %>
 <head>
     <meta charset="UTF-8">

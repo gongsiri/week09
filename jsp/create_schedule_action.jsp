@@ -20,22 +20,22 @@
     int month_value = Integer.parseInt(request.getParameter("month_value"));
     int day_value = Integer.parseInt(request.getParameter("day_value"));
     String content_value = request.getParameter("content_value");
-    if(key_value !=session_value){
+
+    if(key_value !=session_value){ // 현재 로그인 된 사람과 일정의 소유자가 다를 때
         response.sendRedirect("/week09/jsp/log_in.jsp");
         return;
     }
 
-    if("PM".equals(apm_value)){
+    if("PM".equals(apm_value)){ // pm일 경우
         if(hour_value !=12){
             hour_value = hour_value + 12;
         }
     }
-    else if("AM".equals(apm_value) && hour_value == 12){
+    else if("AM".equals(apm_value) && hour_value == 12){ // 12 am일 경우
         hour_value = 0;
     }
-        
-
-    String date_value = year_value + "-" + month_value + "-" + day_value + " " + hour_value + ":" + minute_value + ":00";
+    
+    String date_value = year_value + "-" + month_value + "-" + day_value + " " + hour_value + ":" + minute_value + ":00"; // timestamp 형식으로
     
     Class.forName("com.mysql.jdbc.Driver");
     Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/week09","gongsil","1005");
@@ -45,7 +45,6 @@
     query.setInt(1,key_value);
     query.setString(2,date_value);
     query.setString(3,content_value);
-
     query.executeUpdate();
 %>
 
@@ -56,7 +55,6 @@
 </head>
 <body>
     <script>
-       alert("글쓰기 완료")
        location.href="/week09/jsp/main.jsp"
     </script>
 

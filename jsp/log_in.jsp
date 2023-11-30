@@ -1,8 +1,4 @@
 <%@ page language="java" contentType="text/html" pageEncoding="utf-8" %>
-<%@ page import="java.sql.DriverManager" %>
-<%@ page import="java.sql.Connection" %>
-<%@ page import="java.sql.PreparedStatement" %>
-<%@ page import="java.sql.ResultSet" %>
 
 <!DOCTYPE html>
 <html lang="kr">
@@ -12,24 +8,6 @@
     <title>Document</title>
     <link rel="stylesheet" href="/week09/css/log_in.css">
     <link rel="stylesheet" href="/week09/css/common.css">
-    <script>
-        function check_event(){
-            var id = document.getElementById("id").value
-            var pw = document.getElementById("pw").value
-    
-            var id_pattern = /^[a-zA-Z0-9]{6,20}$/
-            var pw_pattern = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{6,30}$/
-            
-            if(!id_pattern.test(id)){
-                alert("아이디를 제대로 입력해 주세요")
-                return false
-            }
-            if(!pw_pattern.test(pw)){
-                alert("비밀번호를 제대로 입력해 주세요")
-                return false
-            }
-        }
-    </script>
 </head>
 <body>
     <main>
@@ -49,5 +27,24 @@
     <footer>
         <input type="button" id="back_page" value="BACK" onclick="history.back()">
     </footer>
+
+    <script>
+        function check_event(){
+            var id = document.getElementById("id").value
+            var pw = document.getElementById("pw").value
+    
+            var id_pattern = /^[a-zA-Z0-9]{6,20}$/
+            var pw_pattern = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{6,30}$/
+            
+            if(!id_pattern.test(id)){
+                alert("아이디를 제대로 입력해 주세요")
+                return false
+            }
+            if(!pw_pattern.test(pw)){
+                alert("비밀번호를 제대로 입력해 주세요")
+                return false
+            }
+        }
+    </script>
 </body>
 </html>

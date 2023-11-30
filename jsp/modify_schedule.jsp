@@ -6,12 +6,12 @@
 <%@ page import="java.util.ArrayList" %>
 
 <%
-    Object user_key_ob = session.getAttribute("key_value");
-    if(user_key_ob == null){
+    Object session_key_value_ob = session.getAttribute("key_value");
+    if(session_key_value_ob == null){
         response.sendRedirect("/week09/jsp/log_in.jsp");
         return;
     }
-    int user_key = Integer.parseInt(user_key_ob.toString());
+    int session_key_value = Integer.parseInt(session_key_value_ob.toString());
     int session_value = Integer.parseInt(request.getParameter("session_input"));
     String apm_value = request.getParameter("apm_input");
     int hour_value =Integer.parseInt(request.getParameter("hour_input"));
@@ -20,7 +20,7 @@
     int key_value = Integer.parseInt(request.getParameter("key_input"));
     String day_value = request.getParameter("date_input");
 
-    if(user_key!=session_value){
+    if(session_key_value!=session_value){
         response.sendRedirect("/week09/jsp/log_in.jsp");
         return;
     }
@@ -54,7 +54,6 @@
 </head>
 <body>
     <script>
-       alert("수정 완료")
        location.href="/week09/jsp/main.jsp"
     </script>
 

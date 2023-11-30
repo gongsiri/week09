@@ -12,57 +12,6 @@
     <title>Document</title>
     <link rel="stylesheet" href="/week09/css/sign_up.css">
     <link rel="stylesheet" href="/week09/css/common.css">
-    <script>
-        function check_event(){
-            var id = document.getElementById("id").value
-            var pw = document.getElementById("pw").value
-            var pw_check = document.getElementById("pw_check").value
-            var name = document.getElementById("name").value
-            var phone = document.getElementById("phone").value
-    
-            var id_pattern = /^[a-zA-Z0-9]{6,20}$/
-            var pw_pattern = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{6,30}$/
-            var name_pattern = /^[가-힣]{2,5}$/
-            var phone_pattern = /^01[0179][0-9]{7,8}$/
-    
-            if(id.trim()==="" || !id_pattern.test(id)){
-                alert("아이디를 제대로 입력해 주세요")
-                return false
-            }
-            if(document.getElementById("id_duplication_check_btn").style.display!="none"){
-                alert("아이디 중복확인을 진행해주십시오")
-                return false
-            }
-            if(pw.trim()==="" || !pw_pattern.test(pw)){
-                alert("비밀번호를 제대로 입력해 주세요")
-                return false
-            }
-            if(pw_check.trim()==="" || pw!=pw_check){
-                alert("비밀번호를 확인해 주세요")
-                return false
-            }
-            if(name.trim()==="" || !name_pattern.test(name)){
-                alert("이름을 제대로 입력해 주세요")
-                return false
-            }
-            if(phone.trim()==="" || !phone_pattern.test(phone)){
-                alert("전화번호를 제대로 입력해 주세요")
-                return false
-            }
-        }
-    
-        function id_duplication_check_event(){
-            var id_pattern = /^[a-zA-Z0-9]{6,20}$/
-            var id= document.getElementById("id").value
-            if(id.trim()==="" || !id_pattern.test(id)){
-                alert("아이디를 제대로 입력해 주세요")
-                return false
-            }
-            
-            window.open('/week09/jsp/id_duplication_check_action.jsp?id_value='+ id,'','width=500,height=350')
-
-        }
-    </script>
 </head>
 <body>
     <main>
@@ -145,5 +94,56 @@
     <footer>
         <input type="button" id="back_page" value="BACK" onclick="history.back()">
     </footer>
+
+    <script>
+        function check_event(){
+            var id = document.getElementById("id").value
+            var pw = document.getElementById("pw").value
+            var pw_check = document.getElementById("pw_check").value
+            var name = document.getElementById("name").value
+            var phone = document.getElementById("phone").value
+    
+            var id_pattern = /^[a-zA-Z0-9]{6,20}$/
+            var pw_pattern = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{6,30}$/
+            var name_pattern = /^[가-힣]{2,5}$/
+            var phone_pattern = /^01[0179][0-9]{7,8}$/
+    
+            if(id.trim()==="" || !id_pattern.test(id)){
+                alert("아이디를 제대로 입력해 주세요")
+                return false
+            }
+            if(document.getElementById("id_duplication_check_btn").style.display!="none"){
+                alert("아이디 중복확인을 진행해주십시오")
+                return false
+            }
+            if(pw.trim()==="" || !pw_pattern.test(pw)){
+                alert("비밀번호를 제대로 입력해 주세요")
+                return false
+            }
+            if(pw_check.trim()==="" || pw!=pw_check){
+                alert("비밀번호를 확인해 주세요")
+                return false
+            }
+            if(name.trim()==="" || !name_pattern.test(name)){
+                alert("이름을 제대로 입력해 주세요")
+                return false
+            }
+            if(phone.trim()==="" || !phone_pattern.test(phone)){
+                alert("전화번호를 제대로 입력해 주세요")
+                return false
+            }
+        }
+    
+        function id_duplication_check_event(){
+            var id_pattern = /^[a-zA-Z0-9]{6,20}$/
+            var id= document.getElementById("id").value
+            if(id.trim()==="" || !id_pattern.test(id)){
+                alert("아이디를 제대로 입력해 주세요")
+                return false
+            }
+            window.open('/week09/jsp/id_duplication_check_action.jsp?id_value='+ id,'','width=500,height=350')
+    
+        }
+    </script>
 </body>
 </html>
